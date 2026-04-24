@@ -1,0 +1,120 @@
+import type { ResumeData } from '@resume-app/shared';
+
+const CSS = `
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .resume-minimal { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 10.5pt; color: #333; padding: 48px 56px; line-height: 1.6; }
+  .name { font-size: 30pt; font-weight: 300; letter-spacing: -0.5px; margin-bottom: 6px; color: #111; }
+  .contact-line { font-size: 9.5pt; color: #666; margin-bottom: 36px; }
+  .contact-line span + span::before { content: '  ·  '; color: #bbb; }
+  .section { margin-bottom: 28px; }
+  .section-title { font-size: 8pt; text-transform: uppercase; letter-spacing: 3px; color: #999; margin-bottom: 14px; }
+  .divider { border: none; border-top: 1px dotted #ccc; margin-bottom: 14px; }
+  .entry { margin-bottom: 14px; }
+  .entry-header { display: flex; justify-content: space-between; align-items: baseline; }
+  .entry-title { font-weight: 600; font-size: 10.5pt; }
+  .entry-subtitle { font-size: 10pt; color: #666; margin-top: 1px; }
+  .entry-date { font-size: 9pt; color: #aaa; white-space: nowrap; }
+  .bullets { margin-top: 5px; padding-left: 16px; }
+  .bullets li { font-size: 10pt; margin-bottom: 3px; color: #444; }
+  .skills-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
+  .skill-item { display: flex; align-items: center; gap: 6px; font-size: 9.5pt; color: #555; border: 1px solid #ddd; padding: 3px 10px; border-radius: 3px; }
+  .skill-dots { display: flex; gap: 2px; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+  .dot-filled { background: #555; }
+  .dot-empty { background: #ddd; }
+  .project-tech { font-size: 9pt; color: #888; margin-top: 3px; }
+  .summary { font-size: 10.5pt; color: #444; }
+`;
+
+export default function MinimalTemplate({ resume }: { resume: ResumeData }) {
+  const { contact, summary, experience, education, skills, projects } = resume;
+
+  return (
+    <div className="resume-minimal" style={{ fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif', padding: '48px 56px' }}>
+      <style>{CSS}</style>
+
+      <div className="name">{contact.name || 'Your Name'}</div>
+      <div className="contact-line">
+        {[contact.email, contact.phone, contact.location, contact.linkedin, contact.github, contact.website]
+          .filter(Boolean).map((v, i) => <span key={i}>{v}</span>)}
+      </div>
+
+      {summary && (
+        <div className="section">
+          <div className="section-title">About</div>
+          <hr className="divider" />
+          <div className="summary">{summary}</div>
+        </div>
+      )}
+
+      {experience.length > 0 && (
+        <div className="section">
+          <div className="section-title">Experience</div>
+          <hr className="divider" />
+          {experience.map(e => (
+            <div key={e.id} className="entry">
+              <div className="entry-header">
+                <span className="entry-title">{e.title} — {e.company}</span>
+                <span className="entry-date">{e.startDate} – {e.endDate}</span>
+              </div>
+              {e.location && <div className="entry-subtitle">{e.location}</div>}
+              {e.bullets.length > 0 && <ul className="bullets">{e.bullets.map((b, i) => <li key={i}>{b}</li>)}</ul>}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {education.length > 0 && (
+        <div className="section">
+          <div className="section-title">Education</div>
+          <hr className="divider" />
+          {education.map(e => (
+            <div key={e.id} className="entry">
+              <div className="entry-header">
+                <span className="entry-title">{e.institution}</span>
+                <span className="entry-date">{e.startDate} – {e.endDate}</span>
+              </div>
+              <div className="entry-subtitle">{e.degree} in {e.field}{e.gpa ? ` · GPA: ${e.gpa}` : ''}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {skills.length > 0 && (
+        <div className="section">
+          <div className="section-title">Skills</div>
+          <hr className="divider" />
+          <div className="skills-wrap">
+            {skills.map(s => (
+              <span key={s.name} className="skill-item">
+                {s.name}
+                <span className="skill-dots">
+                  {[1, 2, 3, 4, 5].map(i => (
+                    <span key={i} className={`dot ${i <= s.level ? 'dot-filled' : 'dot-empty'}`} />
+                  ))}
+                </span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {projects.length > 0 && (
+        <div className="section">
+          <div className="section-title">Projects</div>
+          <hr className="divider" />
+          {projects.map(p => (
+            <div key={p.id} className="entry">
+              <div className="entry-header">
+                <span className="entry-title">{p.name}</span>
+                {p.url && <span style={{ fontSize: '9pt', color: '#888' }}>{p.url}</span>}
+              </div>
+              <div style={{ fontSize: '10pt', color: '#444' }}>{p.description}</div>
+              {p.technologies.length > 0 && <div className="project-tech">{p.technologies.join(' · ')}</div>}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
