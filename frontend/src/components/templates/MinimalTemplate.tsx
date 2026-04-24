@@ -14,8 +14,8 @@ const CSS = `
   .entry-title { font-weight: 600; font-size: 10.5pt; }
   .entry-subtitle { font-size: 10pt; color: #666; margin-top: 1px; }
   .entry-date { font-size: 9pt; color: #aaa; white-space: nowrap; }
-  .bullets { margin-top: 5px; padding-left: 16px; }
-  .bullets li { font-size: 10pt; margin-bottom: 3px; color: #444; }
+  .bullets { margin-top: 5px; padding-left: 16px; list-style-type: disc; }
+  .bullets li { font-size: 10pt; margin-bottom: 3px; color: #444; overflow-wrap: break-word; }
   .skills-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
   .skill-item { display: flex; align-items: center; gap: 6px; font-size: 9.5pt; color: #555; border: 1px solid #ddd; padding: 3px 10px; border-radius: 3px; }
   .skill-dots { display: flex; gap: 2px; }

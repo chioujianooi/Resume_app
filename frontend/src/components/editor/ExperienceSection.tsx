@@ -81,10 +81,12 @@ function EntryCard({ entry, onUpdate, onDelete }: {
             <div className="space-y-2">
               {entry.bullets.map((b, i) => (
                 <div key={i} className="flex gap-2">
-                  <input value={b} onChange={e => updateBullet(i, e.target.value)}
+                  <textarea value={b} onChange={e => updateBullet(i, e.target.value)}
                     placeholder="Achieved X by doing Y, resulting in Z"
-                    className="flex-1 px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                  <button onClick={() => removeBullet(i)} className="text-slate-400 hover:text-red-500 text-sm px-2">✕</button>
+                    rows={2}
+                    onInput={e => { const t = e.currentTarget; t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }}
+                    className="flex-1 px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none overflow-hidden" />
+                  <button onClick={() => removeBullet(i)} className="text-slate-400 hover:text-red-500 text-sm px-2 mt-1">✕</button>
                 </div>
               ))}
             </div>

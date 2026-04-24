@@ -4,7 +4,7 @@ export const MODERN_CSS = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Arial', sans-serif; font-size: 10.5pt; color: #2d2d2d; display: flex; min-height: 100vh; }
   .sidebar { width: 200px; min-width: 200px; background: #1e3a5f; color: #fff; padding: 32px 20px; }
-  .main { flex: 1; padding: 32px 32px 32px 28px; }
+  .main { flex: 1; min-width: 0; padding: 32px 32px 32px 28px; }
   .profile-photo { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; display: block; margin: 0 auto 16px; border: 3px solid #2e5a8a; }
   .sidebar .name { font-size: 16pt; font-weight: bold; line-height: 1.3; margin-bottom: 20px; word-break: break-word; }
   .sidebar-section { margin-bottom: 20px; }
@@ -23,8 +23,8 @@ export const MODERN_CSS = `
   .entry-title { font-weight: bold; font-size: 10.5pt; }
   .entry-subtitle { color: #555; font-size: 9.5pt; margin-top: 1px; }
   .entry-date { font-size: 9pt; color: #888; white-space: nowrap; }
-  .bullets { margin-top: 4px; padding-left: 16px; }
-  .bullets li { font-size: 10pt; margin-bottom: 2px; }
+  .bullets { margin-top: 4px; padding-left: 16px; list-style-type: disc; }
+  .bullets li { font-size: 10pt; margin-bottom: 2px; overflow-wrap: break-word; }
   .project-tech { font-size: 9pt; color: #666; margin-top: 2px; }
 `;
 
