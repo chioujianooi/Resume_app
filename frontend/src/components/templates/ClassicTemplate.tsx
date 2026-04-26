@@ -4,7 +4,7 @@ import { LABELS } from '../../utils/templateLabels';
 
 const CSS = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body, .resume-root { font-family: 'Georgia', serif; font-size: 11pt; color: #1a1a1a; padding: 40px 48px; line-height: 1.5; }
+  body, .resume-root { font-family: 'Georgia', serif; font-size: 11pt; color: #1a1a1a; padding: 40px 48px; line-height: 1.5; min-height: 297mm; }
   .header { text-align: center; margin-bottom: 20px; }
   .name { font-size: 26pt; font-weight: bold; letter-spacing: 1px; }
   .contact-line { font-size: 9.5pt; color: #444; margin-top: 6px; }
