@@ -1,5 +1,6 @@
 import type { ResumeData } from '@resume-app/shared';
 import { parseBold } from '../../utils/bulletFormat';
+import { LABELS } from '../../utils/templateLabels';
 
 const CSS = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -29,6 +30,7 @@ const CSS = `
 
 export default function MinimalTemplate({ resume }: { resume: ResumeData }) {
   const { contact, summary, experience, education, skills, projects } = resume;
+  const L = LABELS.minimal[resume.language ?? 'en'];
 
   return (
     <div className="resume-minimal" style={{ fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif', padding: '48px 56px' }}>
@@ -42,7 +44,7 @@ export default function MinimalTemplate({ resume }: { resume: ResumeData }) {
 
       {summary && (
         <div className="section">
-          <div className="section-title">About</div>
+          <div className="section-title">{L.about}</div>
           <hr className="divider" />
           <div className="summary">{summary}</div>
         </div>
@@ -50,7 +52,7 @@ export default function MinimalTemplate({ resume }: { resume: ResumeData }) {
 
       {experience.length > 0 && (
         <div className="section">
-          <div className="section-title">Experience</div>
+          <div className="section-title">{L.experience}</div>
           <hr className="divider" />
           {experience.map(e => (
             <div key={e.id} className="entry">
@@ -67,7 +69,7 @@ export default function MinimalTemplate({ resume }: { resume: ResumeData }) {
 
       {education.length > 0 && (
         <div className="section">
-          <div className="section-title">Education</div>
+          <div className="section-title">{L.education}</div>
           <hr className="divider" />
           {education.map(e => (
             <div key={e.id} className="entry">
@@ -83,7 +85,7 @@ export default function MinimalTemplate({ resume }: { resume: ResumeData }) {
 
       {skills.length > 0 && (
         <div className="section">
-          <div className="section-title">Skills</div>
+          <div className="section-title">{L.skills}</div>
           <hr className="divider" />
           <div className="skills-wrap">
             {skills.map(s => (
@@ -102,7 +104,7 @@ export default function MinimalTemplate({ resume }: { resume: ResumeData }) {
 
       {projects.length > 0 && (
         <div className="section">
-          <div className="section-title">Projects</div>
+          <div className="section-title">{L.projects}</div>
           <hr className="divider" />
           {projects.map(p => (
             <div key={p.id} className="entry">

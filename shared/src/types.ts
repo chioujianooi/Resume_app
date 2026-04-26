@@ -52,6 +52,7 @@ export interface ResumeData {
   skills: SkillEntry[];
   projects: ProjectEntry[];
   selectedTemplate: TemplateId;
+  language?: ResumeLanguage;
   updatedAt: string;
 }
 
@@ -62,6 +63,8 @@ export interface ResumeSummary {
 }
 
 export type TemplateId = 'classic' | 'modern' | 'minimal';
+
+export type ResumeLanguage = 'en' | 'de';
 
 export interface TemplateMetadata {
   id: TemplateId;

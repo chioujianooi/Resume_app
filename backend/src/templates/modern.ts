@@ -1,4 +1,5 @@
 import { ResumeData } from '@resume-app/shared';
+import { LABELS } from './labels';
 
 export const MODERN_CSS = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -42,6 +43,7 @@ function dots(level: number): string {
 
 export function renderModern(data: ResumeData): string {
   const { contact, summary, experience, education, skills, projects } = data;
+  const L = LABELS.modern[data.language ?? 'en'];
 
   const sidebarContact = [
     contact.email && `<div class="sidebar-item">${contact.email}</div>`,
@@ -87,7 +89,7 @@ export function renderModern(data: ResumeData): string {
         ${p.url ? `<a href="${p.url}" style="font-size:9pt;color:#555;">${p.url}</a>` : ''}
       </div>
       <div style="font-size:10pt;">${p.description}</div>
-      ${p.technologies.length ? `<div class="project-tech">Stack: ${p.technologies.join(', ')}</div>` : ''}
+      ${p.technologies.length ? `<div class="project-tech">${L.stack} ${p.technologies.join(', ')}</div>` : ''}
     </div>
   `).join('');
 
@@ -102,12 +104,12 @@ export function renderModern(data: ResumeData): string {
     ${contact.profilePhoto ? `<img src="${contact.profilePhoto}" alt="Profile" class="profile-photo">` : ''}
     <div class="name">${contact.name}</div>
     <div class="sidebar-section">
-      <div class="sidebar-title">Contact</div>
+      <div class="sidebar-title">${L.contact}</div>
       ${sidebarContact}
     </div>
     ${skills.length ? `
     <div class="sidebar-section">
-      <div class="sidebar-title">Skills</div>
+      <div class="sidebar-title">${L.skills}</div>
       ${skillsHtml}
     </div>` : ''}
   </div>
@@ -115,25 +117,25 @@ export function renderModern(data: ResumeData): string {
   <div class="main">
     ${summary ? `
     <div class="section">
-      <div class="section-title">Profile</div>
+      <div class="section-title">${L.profile}</div>
       <div style="font-size:10.5pt;">${summary}</div>
     </div>` : ''}
 
     ${experience.length ? `
     <div class="section">
-      <div class="section-title">Experience</div>
+      <div class="section-title">${L.experience}</div>
       ${experienceHtml}
     </div>` : ''}
 
     ${education.length ? `
     <div class="section">
-      <div class="section-title">Education</div>
+      <div class="section-title">${L.education}</div>
       ${educationHtml}
     </div>` : ''}
 
     ${projects.length ? `
     <div class="section">
-      <div class="section-title">Projects</div>
+      <div class="section-title">${L.projects}</div>
       ${projectsHtml}
     </div>` : ''}
   </div>

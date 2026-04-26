@@ -14,6 +14,7 @@ function emptyResume(id: string): ResumeData {
     skills: [],
     projects: [],
     selectedTemplate: 'classic',
+    language: 'en',
     updatedAt: new Date().toISOString(),
   };
 }

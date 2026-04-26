@@ -1,4 +1,5 @@
 import { ResumeData } from '@resume-app/shared';
+import { LABELS } from './labels';
 
 export const CLASSIC_CSS = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -45,6 +46,7 @@ function dots(level: number): string {
 
 export function renderClassic(data: ResumeData): string {
   const { contact, summary, experience, education, skills, projects } = data;
+  const L = LABELS.classic[data.language ?? 'en'];
 
   const contactParts = sep([
     contact.email,
@@ -90,7 +92,7 @@ export function renderClassic(data: ResumeData): string {
         ${p.url ? `<a href="${p.url}" style="font-size:9pt;color:#555;">${p.url}</a>` : ''}
       </div>
       <div style="font-size:10pt;">${p.description}</div>
-      ${p.technologies.length ? `<div class="project-tech">Technologies: ${p.technologies.join(', ')}</div>` : ''}
+      ${p.technologies.length ? `<div class="project-tech">${L.technologies} ${p.technologies.join(', ')}</div>` : ''}
     </div>
   `).join('');
 
@@ -109,35 +111,35 @@ export function renderClassic(data: ResumeData): string {
   ${summary ? `
   <div class="section">
     <hr>
-    <div class="section-title">Summary</div>
+    <div class="section-title">${L.summary}</div>
     <div class="summary">${summary}</div>
   </div>` : ''}
 
   ${experience.length ? `
   <div class="section">
     <hr>
-    <div class="section-title">Experience</div>
+    <div class="section-title">${L.experience}</div>
     ${experienceHtml}
   </div>` : ''}
 
   ${education.length ? `
   <div class="section">
     <hr>
-    <div class="section-title">Education</div>
+    <div class="section-title">${L.education}</div>
     ${educationHtml}
   </div>` : ''}
 
   ${skills.length ? `
   <div class="section">
     <hr>
-    <div class="section-title">Skills</div>
+    <div class="section-title">${L.skills}</div>
     <div class="skills-list">${skillsHtml}</div>
   </div>` : ''}
 
   ${projects.length ? `
   <div class="section">
     <hr>
-    <div class="section-title">Projects</div>
+    <div class="section-title">${L.projects}</div>
     ${projectsHtml}
   </div>` : ''}
 </body>

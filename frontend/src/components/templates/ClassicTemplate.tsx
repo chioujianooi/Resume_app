@@ -1,5 +1,6 @@
 import type { ResumeData } from '@resume-app/shared';
 import { parseBold } from '../../utils/bulletFormat';
+import { LABELS } from '../../utils/templateLabels';
 
 const CSS = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -29,6 +30,7 @@ const CSS = `
 
 export default function ClassicTemplate({ resume }: { resume: ResumeData }) {
   const { contact, summary, experience, education, skills, projects } = resume;
+  const L = LABELS.classic[resume.language ?? 'en'];
   const contactParts = [contact.email, contact.phone, contact.location, contact.linkedin, contact.github, contact.website]
     .filter(Boolean).join(' | ');
 
@@ -44,7 +46,7 @@ export default function ClassicTemplate({ resume }: { resume: ResumeData }) {
       {summary && (
         <div className="section">
           <hr />
-          <div className="section-title">Summary</div>
+          <div className="section-title">{L.summary}</div>
           <div className="summary">{summary}</div>
         </div>
       )}
@@ -52,7 +54,7 @@ export default function ClassicTemplate({ resume }: { resume: ResumeData }) {
       {experience.length > 0 && (
         <div className="section">
           <hr />
-          <div className="section-title">Experience</div>
+          <div className="section-title">{L.experience}</div>
           {experience.map(e => (
             <div key={e.id} className="entry">
               <div className="entry-header">
@@ -71,7 +73,7 @@ export default function ClassicTemplate({ resume }: { resume: ResumeData }) {
       {education.length > 0 && (
         <div className="section">
           <hr />
-          <div className="section-title">Education</div>
+          <div className="section-title">{L.education}</div>
           {education.map(e => (
             <div key={e.id} className="entry">
               <div className="entry-header">
@@ -87,7 +89,7 @@ export default function ClassicTemplate({ resume }: { resume: ResumeData }) {
       {skills.length > 0 && (
         <div className="section">
           <hr />
-          <div className="section-title">Skills</div>
+          <div className="section-title">{L.skills}</div>
           <div className="skills-list">
             {skills.map(s => (
               <span key={s.name} className="skill-item">
@@ -106,7 +108,7 @@ export default function ClassicTemplate({ resume }: { resume: ResumeData }) {
       {projects.length > 0 && (
         <div className="section">
           <hr />
-          <div className="section-title">Projects</div>
+          <div className="section-title">{L.projects}</div>
           {projects.map(p => (
             <div key={p.id} className="entry">
               <div className="entry-header">
@@ -114,7 +116,7 @@ export default function ClassicTemplate({ resume }: { resume: ResumeData }) {
                 {p.url && <span style={{ fontSize: '9pt', color: '#555' }}>{p.url}</span>}
               </div>
               <div style={{ fontSize: '10pt' }}>{p.description}</div>
-              {p.technologies.length > 0 && <div className="project-tech">Technologies: {p.technologies.join(', ')}</div>}
+              {p.technologies.length > 0 && <div className="project-tech">{L.technologies} {p.technologies.join(', ')}</div>}
             </div>
           ))}
         </div>

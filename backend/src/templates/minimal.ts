@@ -1,4 +1,5 @@
 import { ResumeData } from '@resume-app/shared';
+import { LABELS } from './labels';
 
 export const MINIMAL_CSS = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -40,6 +41,7 @@ function dots(level: number): string {
 
 export function renderMinimal(data: ResumeData): string {
   const { contact, summary, experience, education, skills, projects } = data;
+  const L = LABELS.minimal[data.language ?? 'en'];
 
   const contactSpans = [
     contact.email,
@@ -101,35 +103,35 @@ export function renderMinimal(data: ResumeData): string {
 
   ${summary ? `
   <div class="section">
-    <div class="section-title">About</div>
+    <div class="section-title">${L.about}</div>
     <hr class="divider">
     <div class="summary">${summary}</div>
   </div>` : ''}
 
   ${experience.length ? `
   <div class="section">
-    <div class="section-title">Experience</div>
+    <div class="section-title">${L.experience}</div>
     <hr class="divider">
     ${experienceHtml}
   </div>` : ''}
 
   ${education.length ? `
   <div class="section">
-    <div class="section-title">Education</div>
+    <div class="section-title">${L.education}</div>
     <hr class="divider">
     ${educationHtml}
   </div>` : ''}
 
   ${skills.length ? `
   <div class="section">
-    <div class="section-title">Skills</div>
+    <div class="section-title">${L.skills}</div>
     <hr class="divider">
     <div class="skills-wrap">${skillsHtml}</div>
   </div>` : ''}
 
   ${projects.length ? `
   <div class="section">
-    <div class="section-title">Projects</div>
+    <div class="section-title">${L.projects}</div>
     <hr class="divider">
     ${projectsHtml}
   </div>` : ''}

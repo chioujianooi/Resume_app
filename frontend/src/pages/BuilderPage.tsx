@@ -6,7 +6,7 @@ import ResumePreview from '../components/preview/ResumePreview';
 import TemplatePicker from '../components/preview/TemplatePicker';
 import ResumeNameInput from '../components/layout/ResumeNameInput';
 import ResumeListDrawer from '../components/layout/ResumeListDrawer';
-import type { TemplateId } from '@resume-app/shared';
+import type { TemplateId, ResumeLanguage } from '@resume-app/shared';
 
 export default function BuilderPage() {
   const { resume, loading, saving, error, updateResume, renameResume, resumeList, switchResume, createNewResume } = useResume();
@@ -83,6 +83,8 @@ export default function BuilderPage() {
             <TemplatePicker
               selected={resume.selectedTemplate}
               onChange={(id: TemplateId) => updateResume({ ...resume, selectedTemplate: id })}
+              selectedLanguage={resume.language ?? 'en'}
+              onLanguageChange={(lang: ResumeLanguage) => updateResume({ ...resume, language: lang })}
             />
             <div className="flex-1 overflow-hidden">
               <ResumePreview resume={resume} />

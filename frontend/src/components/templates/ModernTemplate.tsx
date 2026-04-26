@@ -1,5 +1,6 @@
 import type { ResumeData } from '@resume-app/shared';
 import { parseBold } from '../../utils/bulletFormat';
+import { LABELS } from '../../utils/templateLabels';
 
 const CSS = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,6 +32,7 @@ const CSS = `
 
 export default function ModernTemplate({ resume }: { resume: ResumeData }) {
   const { contact, summary, experience, education, skills, projects } = resume;
+  const L = LABELS.modern[resume.language ?? 'en'];
 
   return (
     <div className="resume-modern" style={{ display: 'flex', fontFamily: 'Arial, sans-serif', fontSize: '10.5pt' }}>
@@ -42,7 +44,7 @@ export default function ModernTemplate({ resume }: { resume: ResumeData }) {
         )}
         <div className="name">{contact.name || 'Your Name'}</div>
         <div className="sidebar-section">
-          <div className="sidebar-title">Contact</div>
+          <div className="sidebar-title">{L.contact}</div>
           {contact.email && <div className="sidebar-item">{contact.email}</div>}
           {contact.phone && <div className="sidebar-item">{contact.phone}</div>}
           {contact.location && <div className="sidebar-item">{contact.location}</div>}
@@ -52,7 +54,7 @@ export default function ModernTemplate({ resume }: { resume: ResumeData }) {
         </div>
         {skills.length > 0 && (
           <div className="sidebar-section">
-            <div className="sidebar-title">Skills</div>
+            <div className="sidebar-title">{L.skills}</div>
             {skills.map(s => (
               <div key={s.name} className="skill-row">
                 <span className="skill-name">{s.name}</span>
@@ -70,14 +72,14 @@ export default function ModernTemplate({ resume }: { resume: ResumeData }) {
       <div className="main">
         {summary && (
           <div className="section">
-            <div className="section-title">Profile</div>
+            <div className="section-title">{L.profile}</div>
             <div style={{ fontSize: '10.5pt' }}>{summary}</div>
           </div>
         )}
 
         {experience.length > 0 && (
           <div className="section">
-            <div className="section-title">Experience</div>
+            <div className="section-title">{L.experience}</div>
             {experience.map(e => (
               <div key={e.id} className="entry">
                 <div className="entry-header">
@@ -93,7 +95,7 @@ export default function ModernTemplate({ resume }: { resume: ResumeData }) {
 
         {education.length > 0 && (
           <div className="section">
-            <div className="section-title">Education</div>
+            <div className="section-title">{L.education}</div>
             {education.map(e => (
               <div key={e.id} className="entry">
                 <div className="entry-header">
@@ -108,7 +110,7 @@ export default function ModernTemplate({ resume }: { resume: ResumeData }) {
 
         {projects.length > 0 && (
           <div className="section">
-            <div className="section-title">Projects</div>
+            <div className="section-title">{L.projects}</div>
             {projects.map(p => (
               <div key={p.id} className="entry">
                 <div className="entry-header">
@@ -116,7 +118,7 @@ export default function ModernTemplate({ resume }: { resume: ResumeData }) {
                   {p.url && <span style={{ fontSize: '9pt', color: '#555' }}>{p.url}</span>}
                 </div>
                 <div style={{ fontSize: '10pt' }}>{p.description}</div>
-                {p.technologies.length > 0 && <div className="project-tech">Stack: {p.technologies.join(', ')}</div>}
+                {p.technologies.length > 0 && <div className="project-tech">{L.stack} {p.technologies.join(', ')}</div>}
               </div>
             ))}
           </div>
