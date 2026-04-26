@@ -13,10 +13,7 @@ export const MODERN_CSS = `
   .sidebar-item { font-size: 9pt; margin-bottom: 5px; word-break: break-all; color: #dce8f5; }
   .skill-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
   .skill-name { font-size: 9pt; color: #dce8f5; }
-  .skill-dots { display: flex; gap: 3px; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-  .dot-filled { background: #a0c4e8; }
-  .dot-empty { background: #2e5a8a; }
+  .skill-level { font-size: 9pt; color: #a0c4e8; font-style: italic; }
   .section { margin-bottom: 20px; }
   .section-title { font-size: 13pt; font-weight: bold; color: #1e3a5f; border-bottom: 2px solid #1e3a5f; padding-bottom: 4px; margin-bottom: 10px; }
   .entry { margin-bottom: 12px; }
@@ -35,11 +32,7 @@ function boldHtml(text: string): string {
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 }
 
-function dots(level: number): string {
-  return [1, 2, 3, 4, 5].map(i =>
-    `<span class="dot ${i <= level ? 'dot-filled' : 'dot-empty'}"></span>`
-  ).join('');
-}
+const LEVEL_LABELS = ['', 'Basic', 'Familiar', 'Intermediate', 'Advanced', 'Expert'];
 
 export function renderModern(data: ResumeData): string {
   const { contact, summary, experience, education, skills, projects } = data;
@@ -58,7 +51,7 @@ export function renderModern(data: ResumeData): string {
   const skillsHtml = skills.map(s => `
     <div class="skill-row">
       <span class="skill-name">${s.name}</span>
-      <div class="skill-dots">${dots(s.level)}</div>
+      <span class="skill-level">${LEVEL_LABELS[s.level] ?? ''}</span>
     </div>
   `).join('');
 

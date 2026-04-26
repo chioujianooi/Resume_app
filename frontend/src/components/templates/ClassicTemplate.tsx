@@ -19,14 +19,13 @@ const CSS = `
   .bullets { margin-top: 4px; padding-left: 16px; list-style-type: disc; }
   .bullets li { font-size: 10pt; margin-bottom: 2px; overflow-wrap: break-word; }
   .skills-list { display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 10pt; }
-  .skill-item { display: flex; align-items: center; gap: 6px; }
-  .skill-dots { display: flex; gap: 2px; }
-  .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
-  .dot-filled { background: #1a1a1a; }
-  .dot-empty { background: #ccc; }
+  .skill-item { font-size: 10pt; }
+  .skill-level { color: #666; font-style: italic; }
   .project-tech { font-size: 9pt; color: #555; margin-top: 2px; }
   .section { margin-bottom: 16px; }
 `;
+
+const LEVEL_LABELS = ['', 'Basic', 'Familiar', 'Intermediate', 'Advanced', 'Expert'];
 
 export default function ClassicTemplate({ resume }: { resume: ResumeData }) {
   const { contact, summary, experience, education, skills, projects } = resume;
@@ -102,12 +101,7 @@ export default function ClassicTemplate({ resume }: { resume: ResumeData }) {
           <div className="skills-list">
             {skills.map(s => (
               <span key={s.name} className="skill-item">
-                {s.name}
-                <span className="skill-dots">
-                  {[1, 2, 3, 4, 5].map(i => (
-                    <span key={i} className={`dot ${i <= s.level ? 'dot-filled' : 'dot-empty'}`} />
-                  ))}
-                </span>
+                {s.name} · <span className="skill-level">{LEVEL_LABELS[s.level] ?? ''}</span>
               </span>
             ))}
           </div>

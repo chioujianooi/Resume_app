@@ -14,10 +14,7 @@ const CSS = `
   .sidebar-item { font-size: 9pt; margin-bottom: 5px; word-break: break-all; color: #dce8f5; }
   .skill-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
   .skill-name { font-size: 9pt; color: #dce8f5; }
-  .skill-dots { display: flex; gap: 3px; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; }
-  .dot-filled { background: #a0c4e8; }
-  .dot-empty { background: #2e5a8a; }
+  .skill-level { font-size: 9pt; color: #a0c4e8; font-style: italic; }
   .section { margin-bottom: 20px; }
   .section-title { font-size: 13pt; font-weight: bold; color: #1e3a5f; border-bottom: 2px solid #1e3a5f; padding-bottom: 4px; margin-bottom: 10px; }
   .entry { margin-bottom: 12px; }
@@ -29,6 +26,8 @@ const CSS = `
   .bullets li { font-size: 10pt; margin-bottom: 2px; overflow-wrap: break-word; }
   .project-tech { font-size: 9pt; color: #666; margin-top: 2px; }
 `;
+
+const LEVEL_LABELS = ['', 'Basic', 'Familiar', 'Intermediate', 'Advanced', 'Expert'];
 
 export default function ModernTemplate({ resume }: { resume: ResumeData }) {
   const { contact, summary, experience, education, skills, projects } = resume;
@@ -67,11 +66,7 @@ export default function ModernTemplate({ resume }: { resume: ResumeData }) {
             {skills.map(s => (
               <div key={s.name} className="skill-row">
                 <span className="skill-name">{s.name}</span>
-                <div className="skill-dots">
-                  {[1, 2, 3, 4, 5].map(i => (
-                    <div key={i} className={`dot ${i <= s.level ? 'dot-filled' : 'dot-empty'}`} />
-                  ))}
-                </div>
+                <span className="skill-level">{LEVEL_LABELS[s.level] ?? ''}</span>
               </div>
             ))}
           </div>

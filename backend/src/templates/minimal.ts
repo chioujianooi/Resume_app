@@ -19,10 +19,7 @@ export const MINIMAL_CSS = `
   .bullets li { font-size: 10pt; margin-bottom: 3px; color: #444; overflow-wrap: break-word; }
   .skills-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
   .skill-item { display: flex; align-items: center; gap: 6px; font-size: 9.5pt; color: #555; border: 1px solid #ddd; padding: 3px 10px; border-radius: 3px; }
-  .skill-dots { display: flex; gap: 2px; }
-  .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
-  .dot-filled { background: #555; }
-  .dot-empty { background: #ddd; }
+  .skill-level { font-size: 8.5pt; color: #888; font-style: italic; }
   .project-tech { font-size: 9pt; color: #888; margin-top: 3px; }
   .summary { font-size: 10.5pt; color: #444; }
 `;
@@ -33,11 +30,7 @@ function boldHtml(text: string): string {
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 }
 
-function dots(level: number): string {
-  return [1, 2, 3, 4, 5].map(i =>
-    `<span class="dot ${i <= level ? 'dot-filled' : 'dot-empty'}"></span>`
-  ).join('');
-}
+const LEVEL_LABELS = ['', 'Basic', 'Familiar', 'Intermediate', 'Advanced', 'Expert'];
 
 export function renderMinimal(data: ResumeData): string {
   const { contact, summary, experience, education, skills, projects } = data;
@@ -75,8 +68,7 @@ export function renderMinimal(data: ResumeData): string {
 
   const skillsHtml = skills.map(s => `
     <span class="skill-item">
-      ${s.name}
-      <span class="skill-dots">${dots(s.level)}</span>
+      ${s.name} · <span class="skill-level">${LEVEL_LABELS[s.level] ?? ''}</span>
     </span>
   `).join('');
 

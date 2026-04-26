@@ -19,11 +19,8 @@ export const CLASSIC_CSS = `
   .bullets { margin-top: 4px; padding-left: 16px; list-style-type: disc; }
   .bullets li { font-size: 10pt; margin-bottom: 2px; overflow-wrap: break-word; }
   .skills-list { display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 10pt; }
-  .skill-item { display: flex; align-items: center; gap: 6px; }
-  .skill-dots { display: flex; gap: 2px; }
-  .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
-  .dot-filled { background: #1a1a1a; }
-  .dot-empty { background: #ccc; }
+  .skill-item { font-size: 10pt; }
+  .skill-level { color: #666; font-style: italic; }
   .project-tech { font-size: 9pt; color: #555; margin-top: 2px; }
   .section { margin-bottom: 16px; }
 `;
@@ -38,11 +35,7 @@ function sep(items: (string | undefined)[], delimiter = ' | '): string {
   return items.filter(Boolean).join(delimiter);
 }
 
-function dots(level: number): string {
-  return [1, 2, 3, 4, 5].map(i =>
-    `<span class="dot ${i <= level ? 'dot-filled' : 'dot-empty'}"></span>`
-  ).join('');
-}
+const LEVEL_LABELS = ['', 'Basic', 'Familiar', 'Intermediate', 'Advanced', 'Expert'];
 
 export function renderClassic(data: ResumeData): string {
   const { contact, summary, experience, education, skills, projects } = data;
@@ -77,8 +70,7 @@ export function renderClassic(data: ResumeData): string {
 
   const skillsHtml = skills.map(s => `
     <span class="skill-item">
-      ${s.name}
-      <span class="skill-dots">${dots(s.level)}</span>
+      ${s.name} · <span class="skill-level">${LEVEL_LABELS[s.level] ?? ''}</span>
     </span>
   `).join('');
 
