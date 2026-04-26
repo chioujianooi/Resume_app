@@ -44,6 +44,7 @@ export interface SkillEntry {
 
 export interface ResumeData {
   id: string;
+  name?: string;
   contact: ContactInfo;
   summary: string;
   experience: ExperienceEntry[];
@@ -51,6 +52,12 @@ export interface ResumeData {
   skills: SkillEntry[];
   projects: ProjectEntry[];
   selectedTemplate: TemplateId;
+  updatedAt: string;
+}
+
+export interface ResumeSummary {
+  id: string;
+  name: string;
   updatedAt: string;
 }
 

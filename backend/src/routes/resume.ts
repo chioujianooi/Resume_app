@@ -1,11 +1,12 @@
 import { Router } from 'express';
-import { createResume, getResume, updateResume } from '../controllers/resumeController';
+import { createResume, getResume, getResumes, updateResume } from '../controllers/resumeController';
 import { exportPdf } from '../controllers/pdfController';
 import { TEMPLATES } from '../templates';
 
 const router = Router();
 
 router.post('/resumes', createResume);
+router.get('/resumes', getResumes);
 router.get('/resumes/:id', getResume);
 router.put('/resumes/:id', updateResume);
 router.get('/resumes/:id/pdf', exportPdf);

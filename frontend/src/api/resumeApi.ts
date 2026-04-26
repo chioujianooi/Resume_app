@@ -1,4 +1,4 @@
-import type { ResumeData, TemplateMetadata } from '@resume-app/shared';
+import type { ResumeData, ResumeSummary, TemplateMetadata } from '@resume-app/shared';
 
 const BASE = '/api';
 
@@ -22,6 +22,12 @@ export async function saveResume(data: ResumeData): Promise<ResumeData> {
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error('Failed to save resume');
+  return res.json();
+}
+
+export async function listResumes(): Promise<ResumeSummary[]> {
+  const res = await fetch(`${BASE}/resumes`);
+  if (!res.ok) throw new Error('Failed to list resumes');
   return res.json();
 }
 

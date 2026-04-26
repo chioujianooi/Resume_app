@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { ResumeData } from '@resume-app/shared';
-import { saveResume, loadResume } from '../services/storageService';
+import { saveResume, loadResume, listResumes } from '../services/storageService';
 
 function emptyResume(id: string): ResumeData {
   return {
     id,
+    name: '',
     contact: { name: '', email: '', phone: '', location: '' },
     summary: '',
     experience: [],
@@ -32,6 +33,11 @@ export async function getResume(req: Request, res: Response): Promise<void> {
     return;
   }
   res.json(resume);
+}
+
+export async function getResumes(_req: Request, res: Response): Promise<void> {
+  const summaries = await listResumes();
+  res.json(summaries);
 }
 
 export async function updateResume(req: Request, res: Response): Promise<void> {
