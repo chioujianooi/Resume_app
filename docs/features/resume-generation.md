@@ -179,6 +179,23 @@ The photo is uploaded in `ContactSection.tsx` using a `<input type="file">` → 
 
 ---
 
+## JSON Export
+
+The "Export JSON" button in the preview toolbar downloads the full `ResumeData` object as a pretty-printed `.json` file. This is a purely client-side operation — no backend call is made.
+
+```
+User clicks "Export JSON" in ResumePreview
+  → JSON.stringify(resume, null, 2)
+  → new Blob([...], { type: 'application/json' })
+  → URL.createObjectURL(blob)
+  → <a download="{name}-resume.json"> click → browser download
+  → URL.revokeObjectURL(url)
+```
+
+The exported file is a complete snapshot of `ResumeData`, including all sections, the selected template, and the language setting. It can be used for backup or to inspect the raw data structure.
+
+---
+
 ## WSL2 System Requirements
 
 Puppeteer bundles its own Chromium binary but Chromium requires native system libraries:

@@ -45,7 +45,7 @@ resume_app/
         │   │   ├── SkillsSection.tsx   # + proficiency dots (1–5)
         │   │   └── ProjectsSection.tsx
         │   ├── preview/
-        │   │   ├── ResumePreview.tsx   # A4 wrapper (794px) + Export PDF button
+        │   │   ├── ResumePreview.tsx   # A4 wrapper (794px) + Export PDF button + Export JSON button
         │   │   └── TemplatePicker.tsx  # Template buttons (classic/modern/minimal) + language toggle (EN/DE)
         │   └── templates/
         │       ├── ClassicTemplate.tsx
