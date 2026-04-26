@@ -13,10 +13,10 @@ resume_app/
 │       ├── index.ts                    # Express entry; SIGTERM/SIGINT handler
 │       ├── routes/resume.ts            # Route definitions
 │       ├── controllers/
-│       │   ├── resumeController.ts     # createResume, getResume, updateResume
+│       │   ├── resumeController.ts     # createResume, getResumes, getResume, updateResume
 │       │   └── pdfController.ts        # exportPdf
 │       ├── services/
-│       │   ├── storageService.ts       # saveResume, loadResume, resumeExists
+│       │   ├── storageService.ts       # saveResume, loadResume, resumeExists, listResumes
 │       │   └── pdfService.ts           # getBrowser (lazy), generatePdf, closeBrowser
 │       ├── templates/
 │       │   ├── index.ts                # TEMPLATES metadata + renderTemplate() dispatcher
@@ -26,11 +26,14 @@ resume_app/
 │       └── data/resumes/               # Persisted JSON files: {id}.json
 └── frontend/
     └── src/
-        ├── api/resumeApi.ts            # All fetch() calls
-        ├── hooks/useResume.ts          # State + 500ms auto-save debounce
+        ├── api/resumeApi.ts            # All fetch() calls (incl. listResumes)
+        ├── hooks/useResume.ts          # State + auto-save + multi-resume management
         ├── pages/BuilderPage.tsx       # Top-level page; loading/error/saving states
         ├── components/
-        │   ├── layout/AppShell.tsx     # 42/58 split-panel layout
+        │   ├── layout/
+        │   │   ├── AppShell.tsx        # 42/58 split-panel layout; headerLeft/headerRight slots
+        │   │   ├── ResumeNameInput.tsx # Inline-editable resume name in the header
+        │   │   └── ResumeListDrawer.tsx# Slide-in drawer listing all resumes
         │   ├── editor/
         │   │   ├── ResumeEditor.tsx    # 6-tab container
         │   │   ├── ContactSection.tsx  # + photo upload
@@ -59,10 +62,44 @@ User types in editor
   → component calls onChange(updatedResume)
   → BuilderPage passes to updateResume()
   → useResume: setResume(updated) [immediate local update]
+  → useResume: patch resumeList entry in-place (name/updatedAt)
   → useResume: debounce 500ms
   → saveResume(data) → PUT /api/resumes/:id
   → resumeController.updateResume
   → storageService.saveResume → {id}.json (atomic write)
+  → on success: patch resumeList entry with server-confirmed updatedAt
+```
+
+### Resume rename
+
+```
+User clicks resume name in header → ResumeNameInput focuses
+User types new name → on blur/Enter
+  → renameResume(name) in useResume
+  → optimistic update: setResume({ ...resume, name })
+                        patch resumeList entry in-place
+  → debounced PUT /api/resumes/:id (same auto-save path)
+```
+
+### Resume switching
+
+```
+User opens ResumeListDrawer → clicks a different resume
+  → switchResume(id) in useResume
+  → cancel any pending debounced save
+  → fetchResume(id) → GET /api/resumes/:id
+  → setResume(data), localStorage.setItem(STORAGE_KEY, id)
+  → editor and preview re-render with new resume data
+```
+
+### New resume creation
+
+```
+User clicks "+ New Resume" in ResumeListDrawer
+  → createNewResume() in useResume
+  → POST /api/resumes → new id
+  → fetchResume(id), setResume, localStorage update
+  → listResumes() → GET /api/resumes → setResumeList (refreshed)
 ```
 
 ### PDF export
@@ -88,7 +125,10 @@ User clicks "Export PDF"
 
 ```
 BuilderPage
+├── ResumeListDrawer (position: fixed; slides in over left panel)
 └── AppShell (42% left / 58% right)
+    ├── [header left] ResumeNameInput   (inline-editable resume name)
+    ├── [header right] "Auto-saves" + hamburger toggle
     ├── [left] ResumeEditor
     │   └── tabs: Contact | Summary | Experience | Education | Skills | Projects
     │       ├── ContactSection      (name, email, phone, location, links, photo upload)
@@ -111,8 +151,12 @@ BuilderPage
 
 All resume state lives in the `useResume` hook (`frontend/src/hooks/useResume.ts`). There is no global state store (no Redux, no Context for resume data).
 
-- **Initial load:** reads `resume_app_id` from `localStorage`; fetches resume or creates a new one
+- **Initial load:** reads `resume_app_id` from `localStorage`; fetches active resume or creates a new one; fetches the full resume list via `GET /api/resumes`
 - **Updates:** `updateResume(data)` sets state immediately (optimistic) and schedules a debounced save
+- **Rename:** `renameResume(name)` updates the active resume's name optimistically and triggers a debounced save
+- **Switch:** `switchResume(id)` cancels any pending save, fetches the target resume, updates `localStorage`
+- **New resume:** `createNewResume()` creates via the API, loads it, refreshes the list
+- **Resume list:** `resumeList: ResumeSummary[]` is kept in sync after every mutation without a full refetch (except after creating a new resume)
 - **Saving indicator:** `saving` boolean exposed to `BuilderPage` for the "Saving..." badge
 - **Error state:** if the backend is unreachable, `error` string is set and the page shows a retry screen
 
@@ -150,4 +194,4 @@ The dispatcher `renderTemplate(data, templateId)` in `backend/src/templates/inde
 
 ## Session Model
 
-One resume per browser session. The resume ID is stored in `localStorage`. The backend has no concept of users or authentication. Clearing `localStorage` or using a different browser starts a fresh resume.
+Multiple resumes can exist on the backend at the same time, each stored as its own `{id}.json` file. The frontend tracks which resume is active via `resume_app_id` in `localStorage`. The `ResumeListDrawer` lets users switch between all saved resumes or create new ones. Clearing `localStorage` or using a different browser will cause the app to create a fresh resume on next load, but existing resumes remain on disk and can be recovered if their IDs are known.

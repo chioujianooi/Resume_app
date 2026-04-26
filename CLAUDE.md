@@ -27,10 +27,11 @@ All data interfaces live in `shared/src/types.ts` and are consumed by both backe
 - `EducationEntry` — id, institution, degree, field, startDate, endDate, gpa?
 - `ProjectEntry` — id, name, description, url?, technologies: string[]
 - `SkillEntry` — name, level (1–5)
-- `ResumeData` — id, contact, summary, experience[], education[], skills: SkillEntry[], projects[], selectedTemplate, updatedAt
+- `ResumeData` — id, name?, contact, summary, experience[], education[], skills: SkillEntry[], projects[], selectedTemplate, updatedAt
+- `ResumeSummary` — id, name, updatedAt (lightweight type returned by the list endpoint)
 - `TemplateId` — `'classic' | 'modern' | 'minimal'`
 
-**Rule:** changing the schema requires updating `shared/src/types.ts` AND all 6 template files (3 backend renderers + 3 React components).
+**Rule:** changing the schema requires updating `shared/src/types.ts` AND all 6 template files (3 backend renderers + 3 React components). Fields that are app-shell metadata only (e.g. `name`) do not need to be rendered in templates and can be safely ignored by them.
 
 ## API Endpoints
 
@@ -39,10 +40,13 @@ All routes are mounted at `/api` on the backend.
 | Method | Path | Description |
 |--------|------|-------------|
 | `POST` | `/api/resumes` | Create empty resume, returns `{ id }` |
+| `GET` | `/api/resumes` | List all resumes, returns `ResumeSummary[]` |
 | `GET` | `/api/resumes/:id` | Fetch `ResumeData` |
 | `PUT` | `/api/resumes/:id` | Save full `ResumeData` |
 | `GET` | `/api/resumes/:id/pdf` | Generate and stream PDF attachment |
 | `GET` | `/api/templates` | Return `TemplateMetadata[]` |
+
+**Route ordering note:** `GET /api/resumes` must be registered before `GET /api/resumes/:id` in the Express router. Express matches routes in declaration order; reversing them would cause the literal string `"resumes"` to be captured as an `:id` param.
 
 ## Template Parity Rule
 
@@ -65,7 +69,9 @@ Uses Puppeteer (headless Chromium). The browser instance is lazy-initialized on 
 
 ## Session Persistence
 
-The frontend stores the resume ID in `localStorage` under the key `resume_app_id`. On load, if an ID exists it fetches the resume; otherwise it calls `POST /api/resumes` to create a new one. If the stored ID is stale (404), it silently creates a fresh resume.
+The frontend stores the active resume ID in `localStorage` under the key `resume_app_id`. On load, if an ID exists it fetches that resume; otherwise it calls `POST /api/resumes` to create a new one. If the stored ID is stale (404), it silently creates a fresh resume.
+
+Multiple resumes can exist on the backend simultaneously. The `useResume` hook fetches the full list via `GET /api/resumes` on init and exposes `resumeList`, `switchResume(id)`, `renameResume(name)`, and `createNewResume()`. Switching a resume updates `localStorage` to the new ID so the next page load restores the last active resume.
 
 ## Key Constraints
 
