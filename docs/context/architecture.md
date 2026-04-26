@@ -39,6 +39,7 @@ resume_app/
         │   │   ├── ContactSection.tsx  # + photo upload
         │   │   ├── SummarySection.tsx
         │   │   ├── ExperienceSection.tsx
+        │   │   ├── BulletEditor.tsx    # contenteditable bullet input; renders **bold** visually
         │   │   ├── EducationSection.tsx
         │   │   ├── SkillsSection.tsx   # + proficiency dots (1–5)
         │   │   └── ProjectsSection.tsx
@@ -49,6 +50,8 @@ resume_app/
         │       ├── ClassicTemplate.tsx
         │       ├── ModernTemplate.tsx
         │       └── MinimalTemplate.tsx
+        └── utils/
+            └── bulletFormat.ts         # parseBold(text) → React.ReactNode; used by all 3 React templates
 ```
 
 ---
@@ -133,7 +136,7 @@ BuilderPage
     │   └── tabs: Contact | Summary | Experience | Education | Skills | Projects
     │       ├── ContactSection      (name, email, phone, location, links, photo upload)
     │       ├── SummarySection      (textarea + char count)
-    │       ├── ExperienceSection   (collapsible cards; multi-line bullet textareas)
+    │       ├── ExperienceSection   (collapsible cards; bullets use BulletEditor — supports **bold**)
     │       ├── EducationSection    (collapsible cards)
     │       ├── SkillsSection       (tag input + 5-dot level picker per skill)
     │       └── ProjectsSection     (collapsible cards + tech tag input)

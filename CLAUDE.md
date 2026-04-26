@@ -80,6 +80,7 @@ Multiple resumes can exist on the backend simultaneously. The `useResume` hook f
 - Template CSS must be identical between backend renderer and React component
 - Do not add fields to `ResumeData` without updating all 6 template files
 - Tailwind CSS is for the app shell UI only — resume templates use inline CSS strings for PDF fidelity
+- Bullet text uses `**word**` for bold. Stored as-is in JSON. Backend templates convert it with a local `boldHtml()` helper; React templates use `parseBold()` from `frontend/src/utils/bulletFormat.ts`. The editor renders bold visually via `BulletEditor.tsx` (contenteditable)
 
 ## Docs
 
