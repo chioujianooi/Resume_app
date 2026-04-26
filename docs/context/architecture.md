@@ -20,6 +20,7 @@ resume_app/
 │       │   └── pdfService.ts           # getBrowser (lazy), generatePdf, closeBrowser
 │       ├── templates/
 │       │   ├── index.ts                # TEMPLATES metadata + renderTemplate() dispatcher
+│       │   ├── labels.ts               # Section label translations for all templates { en, de }
 │       │   ├── classic.ts              # renderClassic(data) → HTML string
 │       │   ├── modern.ts               # renderModern(data) → HTML string
 │       │   └── minimal.ts              # renderMinimal(data) → HTML string
@@ -36,7 +37,7 @@ resume_app/
         │   │   └── ResumeListDrawer.tsx# Slide-in drawer listing all resumes
         │   ├── editor/
         │   │   ├── ResumeEditor.tsx    # 6-tab container
-        │   │   ├── ContactSection.tsx  # + photo upload
+        │   │   ├── ContactSection.tsx  # + dynamic links list + photo upload
         │   │   ├── SummarySection.tsx
         │   │   ├── ExperienceSection.tsx
         │   │   ├── BulletEditor.tsx    # contenteditable bullet input; renders **bold** visually
@@ -45,13 +46,14 @@ resume_app/
         │   │   └── ProjectsSection.tsx
         │   ├── preview/
         │   │   ├── ResumePreview.tsx   # A4 wrapper (794px) + Export PDF button
-        │   │   └── TemplatePicker.tsx  # 3 template buttons
+        │   │   └── TemplatePicker.tsx  # Template buttons (classic/modern/minimal) + language toggle (EN/DE)
         │   └── templates/
         │       ├── ClassicTemplate.tsx
         │       ├── ModernTemplate.tsx
         │       └── MinimalTemplate.tsx
         └── utils/
-            └── bulletFormat.ts         # parseBold(text) → React.ReactNode; used by all 3 React templates
+            ├── bulletFormat.ts         # parseBold(text) → React.ReactNode; used by all 3 React templates
+            └── templateLabels.ts       # Section label translations for all templates { en, de } (mirrors backend labels.ts)
 ```
 
 ---
@@ -141,7 +143,7 @@ BuilderPage
     │       ├── SkillsSection       (tag input + 5-dot level picker per skill)
     │       └── ProjectsSection     (collapsible cards + tech tag input)
     └── [right]
-        ├── TemplatePicker          (classic / modern / minimal buttons)
+        ├── TemplatePicker          (classic / modern / minimal buttons + EN / DE language toggle)
         └── ResumePreview
             ├── A4 div (794×1123px, drop shadow)
             │   └── ClassicTemplate | ModernTemplate | MinimalTemplate
@@ -190,6 +192,15 @@ Each template exists in two mirrors:
 | Used by | Puppeteer PDF generation | Live preview in browser |
 
 The CSS constant (`const CSS = \`...\``) must be identical in both files. This is enforced by convention — there is no build-time check.
+
+Section label translations (e.g. "Experience" → "Berufserfahrung") live in a parallel pair of files that must also be kept in sync:
+
+| | Backend | Frontend |
+|---|---|---|
+| File | `backend/src/templates/labels.ts` | `frontend/src/utils/templateLabels.ts` |
+| Shape | `LABELS.<template>.<lang>.<key>` | identical |
+
+Each template renderer resolves its labels with `const L = LABELS.<template>[data.language ?? 'en']` and uses `L.<key>` wherever a section heading or fixed label appears.
 
 The dispatcher `renderTemplate(data, templateId)` in `backend/src/templates/index.ts` routes to the correct renderer.
 

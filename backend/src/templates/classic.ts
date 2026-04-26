@@ -48,14 +48,11 @@ export function renderClassic(data: ResumeData): string {
   const { contact, summary, experience, education, skills, projects } = data;
   const L = LABELS.classic[data.language ?? 'en'];
 
-  const contactParts = sep([
-    contact.email,
-    contact.phone,
-    contact.location,
-    contact.linkedin,
-    contact.github,
-    contact.website,
-  ]);
+  const plainContact = sep([contact.email, contact.phone, contact.location]);
+  const linksHtml = (contact.links ?? [])
+    .map(l => `<a href="${l.url}" style="color:#444;text-decoration:none;">${l.label || l.url}</a>`)
+    .join(' | ');
+  const contactParts = [plainContact, linksHtml].filter(Boolean).join(' | ');
 
   const experienceHtml = experience.map(e => `
     <div class="entry">

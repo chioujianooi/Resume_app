@@ -1,11 +1,14 @@
+export interface LinkEntry {
+  label: string;
+  url: string;
+}
+
 export interface ContactInfo {
   name: string;
   email: string;
   phone: string;
   location: string;
-  linkedin?: string;
-  github?: string;
-  website?: string;
+  links?: LinkEntry[];
   profilePhoto?: string;
 }
 

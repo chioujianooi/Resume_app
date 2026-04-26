@@ -22,14 +22,16 @@ Start both dev servers: `npm run dev` (from repo root)
 All data interfaces live in `shared/src/types.ts` and are consumed by both backend and frontend via the `@resume-app/shared` workspace package.
 
 **Current schema:**
-- `ContactInfo` — name, email, phone, location, linkedin?, github?, website?, profilePhoto? (base64)
+- `LinkEntry` — label: string, url: string
+- `ContactInfo` — name, email, phone, location, links?: LinkEntry[], profilePhoto? (base64)
 - `ExperienceEntry` — id, company, title, startDate, endDate, location?, bullets: string[]
 - `EducationEntry` — id, institution, degree, field, startDate, endDate, gpa?
 - `ProjectEntry` — id, name, description, url?, technologies: string[]
 - `SkillEntry` — name, level (1–5)
-- `ResumeData` — id, name?, contact, summary, experience[], education[], skills: SkillEntry[], projects[], selectedTemplate, updatedAt
+- `ResumeData` — id, name?, contact, summary, experience[], education[], skills: SkillEntry[], projects[], selectedTemplate, language?, updatedAt
 - `ResumeSummary` — id, name, updatedAt (lightweight type returned by the list endpoint)
 - `TemplateId` — `'classic' | 'modern' | 'minimal'`
+- `ResumeLanguage` — `'en' | 'de'`
 
 **Rule:** changing the schema requires updating `shared/src/types.ts` AND all 6 template files (3 backend renderers + 3 React components). Fields that are app-shell metadata only (e.g. `name`) do not need to be rendered in templates and can be safely ignored by them.
 
@@ -81,6 +83,8 @@ Multiple resumes can exist on the backend simultaneously. The `useResume` hook f
 - Do not add fields to `ResumeData` without updating all 6 template files
 - Tailwind CSS is for the app shell UI only — resume templates use inline CSS strings for PDF fidelity
 - Bullet text uses `**word**` for bold. Stored as-is in JSON. Backend templates convert it with a local `boldHtml()` helper; React templates use `parseBold()` from `frontend/src/utils/bulletFormat.ts`. The editor renders bold visually via `BulletEditor.tsx` (contenteditable)
+- Template section labels (e.g. "Experience", "Skills") live in translation maps: `backend/src/templates/labels.ts` and `frontend/src/utils/templateLabels.ts`. Both files must be kept identical. Each template resolves labels via `LABELS.<template>[data.language ?? 'en']`.
+- `ContactInfo.links` is a free-form array of `{ label, url }` entries. All three templates render them as clickable `<a>` hyperlinks. Modern puts them in a dedicated sidebar "Links" section. Classic renders them inline in the contact line separated by ` | `. Minimal renders them as `<span><a>` elements in the contact line; the CSS `span + span::before` rule inserts ` · ` separators automatically.
 
 ## Docs
 

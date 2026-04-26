@@ -49,10 +49,11 @@ export function renderModern(data: ResumeData): string {
     contact.email && `<div class="sidebar-item">${contact.email}</div>`,
     contact.phone && `<div class="sidebar-item">${contact.phone}</div>`,
     contact.location && `<div class="sidebar-item">${contact.location}</div>`,
-    contact.linkedin && `<div class="sidebar-item">${contact.linkedin}</div>`,
-    contact.github && `<div class="sidebar-item">${contact.github}</div>`,
-    contact.website && `<div class="sidebar-item">${contact.website}</div>`,
   ].filter(Boolean).join('');
+
+  const sidebarLinks = (contact.links ?? []).map(l =>
+    `<div class="sidebar-item"><a href="${l.url}" style="color:#a0c4e8;text-decoration:none;word-break:break-all;">${l.label || l.url}</a></div>`
+  ).join('');
 
   const skillsHtml = skills.map(s => `
     <div class="skill-row">
@@ -107,6 +108,11 @@ export function renderModern(data: ResumeData): string {
       <div class="sidebar-title">${L.contact}</div>
       ${sidebarContact}
     </div>
+    ${sidebarLinks ? `
+    <div class="sidebar-section">
+      <div class="sidebar-title">${L.links}</div>
+      ${sidebarLinks}
+    </div>` : ''}
     ${skills.length ? `
     <div class="sidebar-section">
       <div class="sidebar-title">${L.skills}</div>

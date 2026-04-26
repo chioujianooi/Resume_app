@@ -4,8 +4,8 @@ export const LABELS = {
     de: { summary: 'Zusammenfassung', experience: 'Berufserfahrung', education: 'Ausbildung', skills: 'Kenntnisse', projects: 'Projekte', technologies: 'Technologien:' },
   },
   modern: {
-    en: { profile: 'Profile', contact: 'Contact', skills: 'Skills', experience: 'Experience', education: 'Education', projects: 'Projects', stack: 'Stack:' },
-    de: { profile: 'Profil', contact: 'Kontakt', skills: 'Kenntnisse', experience: 'Berufserfahrung', education: 'Ausbildung', projects: 'Projekte', stack: 'Stack:' },
+    en: { profile: 'Profile', contact: 'Contact', links: 'Links', skills: 'Skills', experience: 'Experience', education: 'Education', projects: 'Projects', stack: 'Stack:' },
+    de: { profile: 'Profil', contact: 'Kontakt', links: 'Links', skills: 'Kenntnisse', experience: 'Berufserfahrung', education: 'Ausbildung', projects: 'Projekte', stack: 'Stack:' },
   },
   minimal: {
     en: { about: 'About', experience: 'Experience', education: 'Education', skills: 'Skills', projects: 'Projects' },

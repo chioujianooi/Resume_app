@@ -1,4 +1,4 @@
-import type { ContactInfo } from '@resume-app/shared';
+import type { ContactInfo, LinkEntry } from '@resume-app/shared';
 
 interface Props {
   contact: ContactInfo;
@@ -42,9 +42,50 @@ export default function ContactSection({ contact, onChange }: Props) {
         <Field label="Phone" value={contact.phone} onChange={set('phone')} placeholder="+1 555 000 0000" />
       </div>
       <Field label="Location" value={contact.location} onChange={set('location')} placeholder="San Francisco, CA" />
-      <Field label="LinkedIn" value={contact.linkedin || ''} onChange={set('linkedin')} placeholder="linkedin.com/in/jane" />
-      <Field label="GitHub" value={contact.github || ''} onChange={set('github')} placeholder="github.com/jane" />
-      <Field label="Website" value={contact.website || ''} onChange={set('website')} placeholder="janesmith.dev" />
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <label className="text-xs font-medium text-slate-600">Links</label>
+        </div>
+        {(contact.links ?? []).length > 0 && (
+          <div className="grid grid-cols-2 gap-x-3 gap-y-1 mb-2 px-1">
+            <span className="text-xs text-slate-400">URL</span>
+            <span className="text-xs text-slate-400">Label</span>
+          </div>
+        )}
+        <div className="space-y-2">
+          {(contact.links ?? []).map((link, i) => {
+            const updateLink = (patch: Partial<LinkEntry>) => {
+              const links = [...(contact.links ?? [])];
+              links[i] = { ...link, ...patch };
+              onChange({ ...contact, links });
+            };
+            const removeLink = () => onChange({ ...contact, links: (contact.links ?? []).filter((_, idx) => idx !== i) });
+            return (
+              <div key={i} className="flex gap-2 items-center">
+                <input
+                  value={link.url}
+                  onChange={e => updateLink({ url: e.target.value })}
+                  placeholder="https://github.com/jane"
+                  className="flex-1 px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  value={link.label}
+                  onChange={e => updateLink({ label: e.target.value })}
+                  placeholder="GitHub"
+                  className="flex-1 px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button onClick={removeLink} className="text-slate-400 hover:text-red-500 text-sm px-1">✕</button>
+              </div>
+            );
+          })}
+        </div>
+        <button
+          onClick={() => onChange({ ...contact, links: [...(contact.links ?? []), { url: '', label: '' }] })}
+          className="mt-2 text-xs text-blue-600 hover:text-blue-800 font-medium"
+        >
+          + Add link
+        </button>
+      </div>
 
       <div>
         <label className="block text-xs font-medium text-slate-600 mb-1">Profile Photo <span className="text-slate-400 font-normal">(Modern template only)</span></label>

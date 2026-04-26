@@ -115,6 +115,33 @@ Any change to the visual design of a template must be made in **both** files:
 
 ---
 
+## Language Support (i18n)
+
+Section headings (e.g. "Experience", "Skills") are looked up from translation maps rather than hardcoded. Two files hold identical maps and must stay in sync:
+
+- `backend/src/templates/labels.ts`
+- `frontend/src/utils/templateLabels.ts`
+
+Each template resolves the active language at render time:
+
+```typescript
+const L = LABELS.<template>[data.language ?? 'en'];
+```
+
+`ResumeData.language` is optional (`'en' | 'de'`); templates default to English when the field is absent (backward-compatible with resumes saved before the feature existed). The language toggle (EN / DE) in `TemplatePicker` stores the selection in `ResumeData` via the normal auto-save path.
+
+---
+
+## Links (Modern Template)
+
+`ContactInfo.links` is a free-form array of `{ label: string; url: string }` entries managed by the user. Rendering differs by template:
+
+- **Modern** — displayed as a "Links" sidebar section with `<a href="...">` elements. The visible text is `label` if set, otherwise `url`.
+- **Classic** — links appear inline in the contact line as `<a>` elements, separated by ` | ` alongside email, phone, and location.
+- **Minimal** — links are rendered as `<a>` elements inside `<span>` tags in the contact line; the CSS `span + span::before` rule inserts the ` · ` separator automatically.
+
+---
+
 ## Skill Level Rendering
 
 Skills include a proficiency level (1–5). Templates render this as filled/empty dot circles.

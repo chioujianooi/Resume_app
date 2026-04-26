@@ -48,10 +48,19 @@ export default function ModernTemplate({ resume }: { resume: ResumeData }) {
           {contact.email && <div className="sidebar-item">{contact.email}</div>}
           {contact.phone && <div className="sidebar-item">{contact.phone}</div>}
           {contact.location && <div className="sidebar-item">{contact.location}</div>}
-          {contact.linkedin && <div className="sidebar-item">{contact.linkedin}</div>}
-          {contact.github && <div className="sidebar-item">{contact.github}</div>}
-          {contact.website && <div className="sidebar-item">{contact.website}</div>}
         </div>
+        {(contact.links ?? []).length > 0 && (
+          <div className="sidebar-section">
+            <div className="sidebar-title">{L.links}</div>
+            {(contact.links ?? []).map((link, i) => (
+              <div key={i} className="sidebar-item">
+                <a href={link.url} style={{ color: '#a0c4e8', textDecoration: 'none', wordBreak: 'break-all' }}>
+                  {link.label || link.url}
+                </a>
+              </div>
+            ))}
+          </div>
+        )}
         {skills.length > 0 && (
           <div className="sidebar-section">
             <div className="sidebar-title">{L.skills}</div>

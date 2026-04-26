@@ -44,13 +44,13 @@ export function renderMinimal(data: ResumeData): string {
   const L = LABELS.minimal[data.language ?? 'en'];
 
   const contactSpans = [
-    contact.email,
-    contact.phone,
-    contact.location,
-    contact.linkedin,
-    contact.github,
-    contact.website,
-  ].filter(Boolean).map(v => `<span>${v}</span>`).join('');
+    contact.email && `<span>${contact.email}</span>`,
+    contact.phone && `<span>${contact.phone}</span>`,
+    contact.location && `<span>${contact.location}</span>`,
+    ...(contact.links ?? []).map(l =>
+      `<span><a href="${l.url}" style="color:#666;text-decoration:none;">${l.label || l.url}</a></span>`
+    ),
+  ].filter(Boolean).join('');
 
   const experienceHtml = experience.map(e => `
     <div class="entry">

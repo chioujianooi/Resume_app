@@ -38,8 +38,12 @@ export default function MinimalTemplate({ resume }: { resume: ResumeData }) {
 
       <div className="name">{contact.name || 'Your Name'}</div>
       <div className="contact-line">
-        {[contact.email, contact.phone, contact.location, contact.linkedin, contact.github, contact.website]
-          .filter(Boolean).map((v, i) => <span key={i}>{v}</span>)}
+        {[contact.email, contact.phone, contact.location].filter(Boolean).map((v, i) => <span key={i}>{v}</span>)}
+        {(contact.links ?? []).map((l, i) => (
+          <span key={`link-${i}`}>
+            <a href={l.url} style={{ color: '#666', textDecoration: 'none' }}>{l.label || l.url}</a>
+          </span>
+        ))}
       </div>
 
       {summary && (

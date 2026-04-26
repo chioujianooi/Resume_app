@@ -31,8 +31,8 @@ const CSS = `
 export default function ClassicTemplate({ resume }: { resume: ResumeData }) {
   const { contact, summary, experience, education, skills, projects } = resume;
   const L = LABELS.classic[resume.language ?? 'en'];
-  const contactParts = [contact.email, contact.phone, contact.location, contact.linkedin, contact.github, contact.website]
-    .filter(Boolean).join(' | ');
+  const plainParts = [contact.email, contact.phone, contact.location].filter(Boolean);
+  const links = contact.links ?? [];
 
   return (
     <div className="resume-root" style={{ fontFamily: 'Georgia, serif', fontSize: '11pt', color: '#1a1a1a', padding: '40px 48px', lineHeight: 1.5 }}>
@@ -40,7 +40,16 @@ export default function ClassicTemplate({ resume }: { resume: ResumeData }) {
 
       <div className="header">
         <div className="name">{contact.name || 'Your Name'}</div>
-        <div className="contact-line">{contactParts}</div>
+        <div className="contact-line">
+          {plainParts.join(' | ')}
+          {plainParts.length > 0 && links.length > 0 && ' | '}
+          {links.map((l, i) => (
+            <span key={i}>
+              {i > 0 && ' | '}
+              <a href={l.url} style={{ color: '#444', textDecoration: 'none' }}>{l.label || l.url}</a>
+            </span>
+          ))}
+        </div>
       </div>
 
       {summary && (
