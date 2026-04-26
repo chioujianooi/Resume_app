@@ -26,6 +26,12 @@ export const MINIMAL_CSS = `
   .summary { font-size: 10.5pt; color: #444; }
 `;
 
+function boldHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+}
+
 function dots(level: number): string {
   return [1, 2, 3, 4, 5].map(i =>
     `<span class="dot ${i <= level ? 'dot-filled' : 'dot-empty'}"></span>`
@@ -51,7 +57,7 @@ export function renderMinimal(data: ResumeData): string {
         <span class="entry-date">${e.startDate} – ${e.endDate}</span>
       </div>
       ${e.location ? `<div class="entry-subtitle">${e.location}</div>` : ''}
-      ${e.bullets.length ? `<ul class="bullets">${e.bullets.map(b => `<li>${b}</li>`).join('')}</ul>` : ''}
+      ${e.bullets.length ? `<ul class="bullets">${e.bullets.map(b => `<li>${boldHtml(b)}</li>`).join('')}</ul>` : ''}
     </div>
   `).join('');
 

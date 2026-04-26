@@ -23,6 +23,24 @@ function EntryCard({ entry, onUpdate, onDelete }: {
   const addBullet = () => onUpdate({ ...entry, bullets: [...entry.bullets, ''] });
   const removeBullet = (i: number) => onUpdate({ ...entry, bullets: entry.bullets.filter((_, idx) => idx !== i) });
 
+  const toggleBold = (i: number, textarea: HTMLTextAreaElement) => {
+    const { selectionStart: s, selectionEnd: e, value } = textarea;
+    let next: string;
+    let cursor: [number, number];
+    if (s === e) {
+      next = value.slice(0, s) + '****' + value.slice(s);
+      cursor = [s + 2, s + 2];
+    } else {
+      next = value.slice(0, s) + '**' + value.slice(s, e) + '**' + value.slice(e);
+      cursor = [s, e + 4];
+    }
+    updateBullet(i, next);
+    requestAnimationFrame(() => {
+      textarea.focus();
+      textarea.setSelectionRange(cursor[0], cursor[1]);
+    });
+  };
+
   return (
     <div className="border border-slate-200 rounded-lg overflow-hidden">
       <div
@@ -81,11 +99,22 @@ function EntryCard({ entry, onUpdate, onDelete }: {
             <div className="space-y-2">
               {entry.bullets.map((b, i) => (
                 <div key={i} className="flex gap-2">
-                  <textarea value={b} onChange={e => updateBullet(i, e.target.value)}
-                    placeholder="Achieved X by doing Y, resulting in Z"
-                    rows={2}
-                    onInput={e => { const t = e.currentTarget; t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }}
-                    className="flex-1 px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none overflow-hidden" />
+                  <div className="flex-1 flex flex-col gap-1">
+                    <div className="flex gap-1">
+                      <button
+                        type="button"
+                        title="Bold (Ctrl+B)"
+                        onMouseDown={e => { e.preventDefault(); const ta = e.currentTarget.closest('.flex-col')!.querySelector('textarea')! as HTMLTextAreaElement; toggleBold(i, ta); }}
+                        className="px-1.5 py-0.5 text-xs font-bold border border-slate-300 rounded hover:bg-slate-100 text-slate-600 leading-none"
+                      >B</button>
+                    </div>
+                    <textarea value={b} onChange={e => updateBullet(i, e.target.value)}
+                      placeholder="Achieved X by doing Y, resulting in Z"
+                      rows={2}
+                      onKeyDown={e => { if (e.ctrlKey && e.key === 'b') { e.preventDefault(); toggleBold(i, e.currentTarget); } }}
+                      onInput={e => { const t = e.currentTarget; t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none overflow-hidden" />
+                  </div>
                   <button onClick={() => removeBullet(i)} className="text-slate-400 hover:text-red-500 text-sm px-2 mt-1">✕</button>
                 </div>
               ))}

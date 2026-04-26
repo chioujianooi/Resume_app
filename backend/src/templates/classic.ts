@@ -27,6 +27,12 @@ export const CLASSIC_CSS = `
   .section { margin-bottom: 16px; }
 `;
 
+function boldHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+}
+
 function sep(items: (string | undefined)[], delimiter = ' | '): string {
   return items.filter(Boolean).join(delimiter);
 }
@@ -56,7 +62,7 @@ export function renderClassic(data: ResumeData): string {
         <span class="entry-date">${e.startDate} – ${e.endDate}</span>
       </div>
       <div class="entry-subtitle">${e.company}${e.location ? `, ${e.location}` : ''}</div>
-      ${e.bullets.length ? `<ul class="bullets">${e.bullets.map(b => `<li>${b}</li>`).join('')}</ul>` : ''}
+      ${e.bullets.length ? `<ul class="bullets">${e.bullets.map(b => `<li>${boldHtml(b)}</li>`).join('')}</ul>` : ''}
     </div>
   `).join('');
 

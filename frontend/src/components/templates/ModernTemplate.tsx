@@ -1,4 +1,5 @@
 import type { ResumeData } from '@resume-app/shared';
+import { parseBold } from '../../utils/bulletFormat';
 
 const CSS = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -84,7 +85,7 @@ export default function ModernTemplate({ resume }: { resume: ResumeData }) {
                   <span className="entry-date">{e.startDate} – {e.endDate}</span>
                 </div>
                 <div className="entry-subtitle">{e.company}{e.location ? ` · ${e.location}` : ''}</div>
-                {e.bullets.length > 0 && <ul className="bullets">{e.bullets.map((b, i) => <li key={i}>{b}</li>)}</ul>}
+                {e.bullets.length > 0 && <ul className="bullets">{e.bullets.map((b, i) => <li key={i}>{parseBold(b)}</li>)}</ul>}
               </div>
             ))}
           </div>
