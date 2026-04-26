@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { ResumeData } from '@resume-app/shared';
-import { saveResume, loadResume, listResumes } from '../services/storageService';
+import { saveResume, loadResume, listResumes, deleteResume } from '../services/storageService';
 
 function emptyResume(id: string): ResumeData {
   return {
@@ -39,6 +39,17 @@ export async function getResume(req: Request, res: Response): Promise<void> {
 export async function getResumes(_req: Request, res: Response): Promise<void> {
   const summaries = await listResumes();
   res.json(summaries);
+}
+
+export async function removeResume(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+  const existing = await loadResume(id);
+  if (!existing) {
+    res.status(404).json({ error: 'Resume not found' });
+    return;
+  }
+  await deleteResume(id);
+  res.status(204).send();
 }
 
 export async function updateResume(req: Request, res: Response): Promise<void> {

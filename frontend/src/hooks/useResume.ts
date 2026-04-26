@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { ResumeData, ResumeSummary } from '@resume-app/shared';
-import { createResume, fetchResume, saveResume, listResumes } from '../api/resumeApi';
+import { createResume, fetchResume, saveResume, listResumes, deleteResume } from '../api/resumeApi';
 
 const STORAGE_KEY = 'resume_app_id';
 
@@ -108,5 +108,31 @@ export function useResume() {
     await refreshList();
   }, []);
 
-  return { resume, loading, saving, error, updateResume, renameResume, resumeList, switchResume, createNewResume };
+  const removeResume = useCallback(async (id: string) => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    await deleteResume(id);
+    const remaining = await listResumes();
+    setResumeList(remaining);
+    if (id === localStorage.getItem(STORAGE_KEY)) {
+      if (remaining.length > 0) {
+        await loadAndSetResume(remaining[0].id);
+      } else {
+        const newId = await createResume();
+        await loadAndSetResume(newId);
+        await refreshList();
+      }
+    }
+  }, []);
+
+  const duplicateResume = useCallback(async (id: string) => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    const source = await fetchResume(id);
+    const newId = await createResume();
+    const copy = { ...source, id: newId, name: `Copy of ${source.name || 'Untitled Resume'}` };
+    await saveResume(copy);
+    await loadAndSetResume(newId);
+    await refreshList();
+  }, []);
+
+  return { resume, loading, saving, error, updateResume, renameResume, resumeList, switchResume, createNewResume, duplicateResume, removeResume };
 }

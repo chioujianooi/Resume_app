@@ -37,6 +37,11 @@ export async function fetchTemplates(): Promise<TemplateMetadata[]> {
   return res.json();
 }
 
+export async function deleteResume(id: string): Promise<void> {
+  const res = await fetch(`${BASE}/resumes/${id}`, { method: 'DELETE' });
+  if (!res.ok) throw new Error('Failed to delete resume');
+}
+
 export function getPdfUrl(id: string): string {
   return `${BASE}/resumes/${id}/pdf`;
 }

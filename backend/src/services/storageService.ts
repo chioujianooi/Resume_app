@@ -37,6 +37,10 @@ export async function resumeExists(id: string): Promise<boolean> {
   }
 }
 
+export async function deleteResume(id: string): Promise<void> {
+  await fs.unlink(filePath(id));
+}
+
 export async function listResumes(): Promise<ResumeSummary[]> {
   let files: string[];
   try {

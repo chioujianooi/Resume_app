@@ -9,7 +9,7 @@ import ResumeListDrawer from '../components/layout/ResumeListDrawer';
 import type { TemplateId, ResumeLanguage } from '@resume-app/shared';
 
 export default function BuilderPage() {
-  const { resume, loading, saving, error, updateResume, renameResume, resumeList, switchResume, createNewResume } = useResume();
+  const { resume, loading, saving, error, updateResume, renameResume, resumeList, switchResume, createNewResume, duplicateResume, removeResume } = useResume();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   if (loading) {
@@ -55,6 +55,8 @@ export default function BuilderPage() {
         activeId={resume.id}
         onSelect={switchResume}
         onNew={createNewResume}
+        onDuplicate={duplicateResume}
+        onDelete={removeResume}
         onClose={() => setDrawerOpen(false)}
       />
 

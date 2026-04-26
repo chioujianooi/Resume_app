@@ -19,10 +19,12 @@ interface ResumeListDrawerProps {
   activeId: string;
   onSelect: (id: string) => void;
   onNew: () => void;
+  onDuplicate: (id: string) => void;
+  onDelete: (id: string) => void;
   onClose: () => void;
 }
 
-export default function ResumeListDrawer({ open, resumes, activeId, onSelect, onNew, onClose }: ResumeListDrawerProps) {
+export default function ResumeListDrawer({ open, resumes, activeId, onSelect, onNew, onDuplicate, onDelete, onClose }: ResumeListDrawerProps) {
   return (
     <>
       {/* Backdrop */}
@@ -57,17 +59,39 @@ export default function ResumeListDrawer({ open, resumes, activeId, onSelect, on
             <p className="text-slate-400 text-xs text-center mt-6">No resumes yet</p>
           )}
           {resumes.map(r => (
-            <button
+            <div
               key={r.id}
-              onClick={() => { onSelect(r.id); onClose(); }}
-              className={`w-full text-left px-4 py-3 flex flex-col gap-0.5 hover:bg-slate-50
-                transition-colors ${r.id === activeId ? 'bg-blue-50 border-l-2 border-blue-500' : ''}`}
+              className={`group flex items-stretch transition-colors
+                ${r.id === activeId ? 'bg-blue-50 border-l-2 border-blue-500' : 'hover:bg-slate-50'}`}
             >
-              <span className={`text-sm font-medium truncate ${r.id === activeId ? 'text-blue-700' : 'text-slate-800'}`}>
-                {r.name || 'Untitled Resume'}
-              </span>
-              <span className="text-xs text-slate-400">{formatRelativeTime(r.updatedAt)}</span>
-            </button>
+              <button
+                onClick={() => { onSelect(r.id); onClose(); }}
+                className="flex-1 min-w-0 text-left px-4 py-3 flex flex-col gap-0.5"
+              >
+                <span className={`text-sm font-medium truncate ${r.id === activeId ? 'text-blue-700' : 'text-slate-800'}`}>
+                  {r.name || 'Untitled Resume'}
+                </span>
+                <span className="text-xs text-slate-400">{formatRelativeTime(r.updatedAt)}</span>
+              </button>
+              <button
+                onClick={() => { onDuplicate(r.id); onClose(); }}
+                className="opacity-0 group-hover:opacity-100 px-2 text-slate-400 hover:text-blue-600 transition-opacity"
+                title="Duplicate"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-4 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+              </button>
+              <button
+                onClick={() => { onDelete(r.id); onClose(); }}
+                className="opacity-0 group-hover:opacity-100 px-2 text-slate-400 hover:text-red-500 transition-opacity"
+                title="Delete"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
           ))}
         </div>
 

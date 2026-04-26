@@ -13,10 +13,10 @@ resume_app/
 │       ├── index.ts                    # Express entry; SIGTERM/SIGINT handler
 │       ├── routes/resume.ts            # Route definitions
 │       ├── controllers/
-│       │   ├── resumeController.ts     # createResume, getResumes, getResume, updateResume
+│       │   ├── resumeController.ts     # createResume, getResumes, getResume, updateResume, removeResume
 │       │   └── pdfController.ts        # exportPdf
 │       ├── services/
-│       │   ├── storageService.ts       # saveResume, loadResume, resumeExists, listResumes
+│       │   ├── storageService.ts       # saveResume, loadResume, resumeExists, listResumes, deleteResume
 │       │   └── pdfService.ts           # getBrowser (lazy), generatePdf, closeBrowser
 │       ├── templates/
 │       │   ├── index.ts                # TEMPLATES metadata + renderTemplate() dispatcher
@@ -34,7 +34,7 @@ resume_app/
         │   ├── layout/
         │   │   ├── AppShell.tsx        # 42/58 split-panel layout; headerLeft/headerRight slots
         │   │   ├── ResumeNameInput.tsx # Inline-editable resume name in the header
-        │   │   └── ResumeListDrawer.tsx# Slide-in drawer listing all resumes
+        │   │   └── ResumeListDrawer.tsx# Slide-in drawer; per-row duplicate + delete actions (revealed on hover)
         │   ├── editor/
         │   │   ├── ResumeEditor.tsx    # 6-tab container
         │   │   ├── ContactSection.tsx  # + dynamic links list + photo upload
@@ -107,6 +107,34 @@ User clicks "+ New Resume" in ResumeListDrawer
   → listResumes() → GET /api/resumes → setResumeList (refreshed)
 ```
 
+### Resume duplication
+
+```
+User hovers a resume row in ResumeListDrawer → clicks copy icon
+  → duplicateResume(id) in useResume
+  → cancel any pending debounced save
+  → fetchResume(id) → GET /api/resumes/:id   [load source data]
+  → createResume()  → POST /api/resumes       [allocate new id]
+  → saveResume({ ...source, id: newId, name: 'Copy of ...' }) → PUT /api/resumes/:newId
+  → loadAndSetResume(newId), localStorage update
+  → listResumes() → GET /api/resumes → setResumeList (refreshed)
+```
+
+### Resume deletion
+
+```
+User hovers a resume row in ResumeListDrawer → clicks trash icon
+  → removeResume(id) in useResume
+  → cancel any pending debounced save
+  → DELETE /api/resumes/:id
+  → resumeController.removeResume
+  → storageService.deleteResume → fs.unlink({id}.json)
+  → listResumes() → setResumeList (refreshed)
+  → if deleted resume was active:
+      remaining list non-empty → loadAndSetResume(remaining[0].id)
+      list now empty           → createResume() + loadAndSetResume (fresh resume)
+```
+
 ### PDF export
 
 ```
@@ -161,6 +189,8 @@ All resume state lives in the `useResume` hook (`frontend/src/hooks/useResume.ts
 - **Rename:** `renameResume(name)` updates the active resume's name optimistically and triggers a debounced save
 - **Switch:** `switchResume(id)` cancels any pending save, fetches the target resume, updates `localStorage`
 - **New resume:** `createNewResume()` creates via the API, loads it, refreshes the list
+- **Duplicate:** `duplicateResume(id)` fetches the source, creates a new ID, saves a copy named "Copy of …", then loads the copy
+- **Delete:** `removeResume(id)` calls `DELETE /api/resumes/:id`, refreshes the list, and if the deleted resume was active it switches to the next available resume (or creates a fresh one if the list is now empty)
 - **Resume list:** `resumeList: ResumeSummary[]` is kept in sync after every mutation without a full refetch (except after creating a new resume)
 - **Saving indicator:** `saving` boolean exposed to `BuilderPage` for the "Saving..." badge
 - **Error state:** if the backend is unreachable, `error` string is set and the page shows a retry screen

@@ -45,6 +45,7 @@ All routes are mounted at `/api` on the backend.
 | `GET` | `/api/resumes` | List all resumes, returns `ResumeSummary[]` |
 | `GET` | `/api/resumes/:id` | Fetch `ResumeData` |
 | `PUT` | `/api/resumes/:id` | Save full `ResumeData` |
+| `DELETE` | `/api/resumes/:id` | Delete a resume (404 if not found) |
 | `GET` | `/api/resumes/:id/pdf` | Generate and stream PDF attachment |
 | `GET` | `/api/templates` | Return `TemplateMetadata[]` |
 
