@@ -8,11 +8,11 @@ export const MINIMAL_CSS = `
   .contact-line { font-size: 9.5pt; color: #666; margin-bottom: 36px; }
   .contact-line span + span::before { content: '  ·  '; color: #bbb; }
   .section { margin-bottom: 28px; }
-  .section-title { font-size: 8pt; text-transform: uppercase; letter-spacing: 3px; color: #999; margin-bottom: 14px; }
+  .section-title { font-size: 10pt; text-transform: uppercase; letter-spacing: 3px; color: #999; margin-bottom: 14px; }
   .divider { border: none; border-top: 1px dotted #ccc; margin-bottom: 14px; }
-  .entry { margin-bottom: 14px; }
+  .entry { margin-bottom: 20px; }
   .entry-header { display: flex; justify-content: space-between; align-items: baseline; }
-  .entry-title { font-weight: 600; font-size: 10.5pt; }
+  .entry-title { font-weight: 600; font-size: 12pt; }
   .entry-subtitle { font-size: 10pt; color: #666; margin-top: 1px; }
   .entry-date { font-size: 9pt; color: #aaa; white-space: nowrap; }
   .entry-body { margin-top: 5px; font-size: 10pt; color: #444; }

@@ -8,11 +8,11 @@ const CSS = `
   .name { font-size: 26pt; font-weight: bold; letter-spacing: 1px; }
   .contact-line { font-size: 9.5pt; color: #444; margin-top: 6px; }
   hr { border: none; border-top: 1.5px solid #222; margin: 14px 0 10px; }
-  .section-title { font-size: 11pt; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+  .section-title { font-size: 14pt; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
   .summary { font-size: 10.5pt; margin-bottom: 16px; }
-  .entry { margin-bottom: 12px; }
+  .entry { margin-bottom: 20px; }
   .entry-header { display: flex; justify-content: space-between; align-items: baseline; }
-  .entry-title { font-weight: bold; font-size: 10.5pt; }
+  .entry-title { font-weight: bold; font-size: 12pt; }
   .entry-subtitle { font-style: italic; font-size: 10pt; color: #444; }
   .entry-date { font-size: 9.5pt; color: #555; white-space: nowrap; }
   .entry-body { margin-top: 4px; font-size: 10pt; color: #444; }
@@ -58,7 +58,7 @@ export default function ClassicTemplate({ resume }: { resume: ResumeData }) {
         <div className="section">
           <hr />
           <div className="section-title">{L.summary}</div>
-          <div className="summary">{summary}</div>
+          <div className="summary" dangerouslySetInnerHTML={{ __html: summary }} />
         </div>
       )}
 

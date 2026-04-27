@@ -94,10 +94,21 @@ export default function ResumePreview({ resume }: Props) {
       <div className="flex-1 overflow-auto bg-slate-200 p-6">
         <div className="mx-auto" style={{ width: '794px' }}>
           <div
-            className="bg-white shadow-xl"
-            style={{ width: '794px', minHeight: '1123px', overflow: 'hidden' }}
+            className="bg-white shadow-xl relative"
+            style={{ width: '794px', minHeight: '1123px' }}
           >
             {renderTemplate()}
+            {/* Page break overlay: 4px slate line at every 1123px (A4 height) */}
+            <div
+              aria-hidden
+              style={{
+                position: 'absolute',
+                inset: 0,
+                backgroundImage: 'repeating-linear-gradient(to bottom, transparent 0px, transparent 1119px, #94a3b8 1119px, #94a3b8 1123px)',
+                pointerEvents: 'none',
+                zIndex: 10,
+              }}
+            />
           </div>
         </div>
       </div>

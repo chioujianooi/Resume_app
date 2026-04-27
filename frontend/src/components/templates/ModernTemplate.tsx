@@ -15,10 +15,10 @@ const CSS = `
   .skill-name { font-size: 9pt; color: #dce8f5; }
   .skill-level { font-size: 9pt; color: #a0c4e8; font-style: italic; }
   .section { margin-bottom: 20px; }
-  .section-title { font-size: 13pt; font-weight: bold; color: #1e3a5f; border-bottom: 2px solid #1e3a5f; padding-bottom: 4px; margin-bottom: 10px; }
-  .entry { margin-bottom: 12px; }
+  .section-title { font-size: 15pt; font-weight: bold; color: #1e3a5f; border-bottom: 2px solid #1e3a5f; padding-bottom: 4px; margin-bottom: 10px; }
+  .entry { margin-bottom: 20px; }
   .entry-header { display: flex; justify-content: space-between; align-items: baseline; }
-  .entry-title { font-weight: bold; font-size: 10.5pt; }
+  .entry-title { font-weight: bold; font-size: 12pt; }
   .entry-subtitle { color: #555; font-size: 9.5pt; margin-top: 1px; }
   .entry-date { font-size: 9pt; color: #888; white-space: nowrap; }
   .entry-body { margin-top: 4px; font-size: 10pt; }
@@ -91,7 +91,7 @@ export default function ModernTemplate({ resume }: { resume: ResumeData }) {
         {summary && (
           <div className="section">
             <div className="section-title">{L.profile}</div>
-            <div style={{ fontSize: '10.5pt' }}>{summary}</div>
+            <div style={{ fontSize: '10.5pt' }} dangerouslySetInnerHTML={{ __html: summary }} />
           </div>
         )}
 
