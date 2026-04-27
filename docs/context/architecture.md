@@ -36,13 +36,14 @@ resume_app/
         │   │   ├── ResumeNameInput.tsx # Inline-editable resume name in the header
         │   │   └── ResumeListDrawer.tsx# Slide-in drawer; per-row duplicate + delete actions (revealed on hover)
         │   ├── editor/
-        │   │   ├── ResumeEditor.tsx    # 6-tab container
+        │   │   ├── ResumeEditor.tsx    # 7-tab container
         │   │   ├── ContactSection.tsx  # + dynamic links list + photo upload
         │   │   ├── SummarySection.tsx
         │   │   ├── ExperienceSection.tsx
         │   │   ├── RichTextEditor.tsx  # contenteditable rich-text input; bold / bullet list / numbered list toolbar
         │   │   ├── EducationSection.tsx
         │   │   ├── SkillsSection.tsx   # + proficiency level (1–5, displayed as text label)
+        │   │   ├── LanguagesSection.tsx # tag input + 5-dot level picker; levels: Basic/Conversational/Intermediate/Advanced/Native
         │   │   └── ProjectsSection.tsx
         │   ├── preview/
         │   │   ├── ResumePreview.tsx   # A4 wrapper (794px) + Export PDF button + Export JSON button
@@ -163,12 +164,13 @@ BuilderPage
     ├── [header left] ResumeNameInput   (inline-editable resume name)
     ├── [header right] "Auto-saves" + hamburger toggle
     ├── [left] ResumeEditor
-    │   └── tabs: Contact | Summary | Experience | Education | Skills | Projects
+    │   └── tabs: Contact | Summary | Experience | Education | Skills | Languages | Projects
     │       ├── ContactSection      (name, email, phone, location, links, photo upload)
     │       ├── SummarySection      (textarea + char count)
     │       ├── ExperienceSection   (collapsible cards; description field uses RichTextEditor — bold / bullet / numbered list)
     │       ├── EducationSection    (collapsible cards)
     │       ├── SkillsSection       (tag input + text level picker per skill: Basic/Familiar/Intermediate/Advanced/Expert)
+    │       ├── LanguagesSection    (tag input + 5-dot level picker; Basic/Conversational/Intermediate/Advanced/Native)
     │       └── ProjectsSection     (collapsible cards + tech tag input)
     └── [right]
         ├── TemplatePicker          (classic / modern / minimal buttons + EN / DE language toggle)

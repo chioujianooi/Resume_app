@@ -155,6 +155,23 @@ Classic and Minimal templates display skills as `"Name · Level"` inline. Modern
 
 ---
 
+## Language Proficiency Rendering
+
+Languages use the same 1–5 numeric level system as skills, but with a different label set appropriate for language fluency:
+
+```typescript
+const LANG_LEVEL_LABELS = ['', 'Basic', 'Conversational', 'Intermediate', 'Advanced', 'Native'];
+// usage: LANG_LEVEL_LABELS[l.level] ?? ''
+```
+
+Rendering placement mirrors skills per template:
+- **Classic / Minimal** — a dedicated "Languages" section after Skills, using the same inline badge style (`"Name · Level"`)
+- **Modern** — a "Languages" sidebar section below Skills, using the same `skill-row` layout (name left, label right)
+
+The section is omitted entirely if `languages` is empty.
+
+---
+
 ## Experience Description (Rich Text)
 
 `ExperienceEntry.description` stores the user's experience content as a raw HTML string produced by `RichTextEditor.tsx`. The editor uses `document.execCommand` to support bold, unordered lists, and ordered lists; its `innerHTML` is saved directly.

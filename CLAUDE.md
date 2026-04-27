@@ -28,7 +28,8 @@ All data interfaces live in `shared/src/types.ts` and are consumed by both backe
 - `EducationEntry` — id, institution, degree, field, startDate, endDate, gpa?
 - `ProjectEntry` — id, name, description, url?, technologies: string[]
 - `SkillEntry` — name, level (1–5)
-- `ResumeData` — id, name?, contact, summary, experience[], education[], skills: SkillEntry[], projects[], selectedTemplate, language?, updatedAt
+- `LanguageEntry` — name, level (1–5: Basic / Conversational / Intermediate / Advanced / Native)
+- `ResumeData` — id, name?, contact, summary, experience[], education[], skills: SkillEntry[], languages: LanguageEntry[], projects[], selectedTemplate, language?, updatedAt
 - `ResumeSummary` — id, name, updatedAt (lightweight type returned by the list endpoint)
 - `TemplateId` — `'classic' | 'modern' | 'minimal'`
 - `ResumeLanguage` — `'en' | 'de'`

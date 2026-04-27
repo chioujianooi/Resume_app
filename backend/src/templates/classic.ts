@@ -39,9 +39,10 @@ function sep(items: (string | undefined)[], delimiter = ' | '): string {
 }
 
 const LEVEL_LABELS = ['', 'Basic', 'Familiar', 'Intermediate', 'Advanced', 'Expert'];
+const LANG_LEVEL_LABELS = ['', 'Basic', 'Conversational', 'Intermediate', 'Advanced', 'Native'];
 
 export function renderClassic(data: ResumeData): string {
-  const { contact, summary, experience, education, skills, projects } = data;
+  const { contact, summary, experience, education, skills, languages, projects } = data;
   const L = LABELS.classic[data.language ?? 'en'];
 
   const plainContact = sep([contact.email, contact.phone, contact.location]);
@@ -74,6 +75,12 @@ export function renderClassic(data: ResumeData): string {
   const skillsHtml = skills.map(s => `
     <span class="skill-item">
       ${s.name} · <span class="skill-level">${LEVEL_LABELS[s.level] ?? ''}</span>
+    </span>
+  `).join('');
+
+  const languagesHtml = (languages ?? []).map(l => `
+    <span class="skill-item">
+      ${l.name} · <span class="skill-level">${LANG_LEVEL_LABELS[l.level] ?? ''}</span>
     </span>
   `).join('');
 
@@ -126,6 +133,13 @@ export function renderClassic(data: ResumeData): string {
     <hr>
     <div class="section-title">${L.skills}</div>
     <div class="skills-list">${skillsHtml}</div>
+  </div>` : ''}
+
+  ${(languages ?? []).length ? `
+  <div class="section">
+    <hr>
+    <div class="section-title">${L.languages}</div>
+    <div class="skills-list">${languagesHtml}</div>
   </div>` : ''}
 
   ${projects.length ? `

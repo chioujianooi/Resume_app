@@ -5,9 +5,10 @@ import SummarySection from './SummarySection';
 import ExperienceSection from './ExperienceSection';
 import EducationSection from './EducationSection';
 import SkillsSection from './SkillsSection';
+import LanguagesSection from './LanguagesSection';
 import ProjectsSection from './ProjectsSection';
 
-type Tab = 'contact' | 'summary' | 'experience' | 'education' | 'skills' | 'projects';
+type Tab = 'contact' | 'summary' | 'experience' | 'education' | 'skills' | 'languages' | 'projects';
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'contact', label: 'Contact' },
@@ -15,6 +16,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'experience', label: 'Experience' },
   { id: 'education', label: 'Education' },
   { id: 'skills', label: 'Skills' },
+  { id: 'languages', label: 'Languages' },
   { id: 'projects', label: 'Projects' },
 ];
 
@@ -61,6 +63,9 @@ export default function ResumeEditor({ resume, onChange }: Props) {
         )}
         {tab === 'skills' && (
           <SkillsSection skills={resume.skills} onChange={s => onChange({ ...resume, skills: s })} />
+        )}
+        {tab === 'languages' && (
+          <LanguagesSection languages={resume.languages ?? []} onChange={l => onChange({ ...resume, languages: l })} />
         )}
         {tab === 'projects' && (
           <ProjectsSection projects={resume.projects} onChange={p => onChange({ ...resume, projects: p })} />

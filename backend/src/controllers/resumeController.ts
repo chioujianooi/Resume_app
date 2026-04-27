@@ -12,6 +12,7 @@ function emptyResume(id: string): ResumeData {
     experience: [],
     education: [],
     skills: [],
+    languages: [],
     projects: [],
     selectedTemplate: 'classic',
     language: 'en',

@@ -36,9 +36,10 @@ function boldHtml(text: string): string {
 }
 
 const LEVEL_LABELS = ['', 'Basic', 'Familiar', 'Intermediate', 'Advanced', 'Expert'];
+const LANG_LEVEL_LABELS = ['', 'Basic', 'Conversational', 'Intermediate', 'Advanced', 'Native'];
 
 export function renderModern(data: ResumeData): string {
-  const { contact, summary, experience, education, skills, projects } = data;
+  const { contact, summary, experience, education, skills, languages, projects } = data;
   const L = LABELS.modern[data.language ?? 'en'];
 
   const sidebarContact = [
@@ -55,6 +56,13 @@ export function renderModern(data: ResumeData): string {
     <div class="skill-row">
       <span class="skill-name">${s.name}</span>
       <span class="skill-level">${LEVEL_LABELS[s.level] ?? ''}</span>
+    </div>
+  `).join('');
+
+  const languagesHtml = (languages ?? []).map(l => `
+    <div class="skill-row">
+      <span class="skill-name">${l.name}</span>
+      <span class="skill-level">${LANG_LEVEL_LABELS[l.level] ?? ''}</span>
     </div>
   `).join('');
 
@@ -113,6 +121,11 @@ export function renderModern(data: ResumeData): string {
     <div class="sidebar-section">
       <div class="sidebar-title">${L.skills}</div>
       ${skillsHtml}
+    </div>` : ''}
+    ${(languages ?? []).length ? `
+    <div class="sidebar-section">
+      <div class="sidebar-title">${L.languages}</div>
+      ${languagesHtml}
     </div>` : ''}
   </div>
 

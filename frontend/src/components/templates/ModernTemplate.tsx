@@ -30,9 +30,10 @@ const CSS = `
 `;
 
 const LEVEL_LABELS = ['', 'Basic', 'Familiar', 'Intermediate', 'Advanced', 'Expert'];
+const LANG_LEVEL_LABELS = ['', 'Basic', 'Conversational', 'Intermediate', 'Advanced', 'Native'];
 
 export default function ModernTemplate({ resume }: { resume: ResumeData }) {
-  const { contact, summary, experience, education, skills, projects } = resume;
+  const { contact, summary, experience, education, skills, languages, projects } = resume;
   const L = LABELS.modern[resume.language ?? 'en'];
 
   return (
@@ -69,6 +70,17 @@ export default function ModernTemplate({ resume }: { resume: ResumeData }) {
               <div key={s.name} className="skill-row">
                 <span className="skill-name">{s.name}</span>
                 <span className="skill-level">{LEVEL_LABELS[s.level] ?? ''}</span>
+              </div>
+            ))}
+          </div>
+        )}
+        {(languages ?? []).length > 0 && (
+          <div className="sidebar-section">
+            <div className="sidebar-title">{L.languages}</div>
+            {(languages ?? []).map(l => (
+              <div key={l.name} className="skill-row">
+                <span className="skill-name">{l.name}</span>
+                <span className="skill-level">{LANG_LEVEL_LABELS[l.level] ?? ''}</span>
               </div>
             ))}
           </div>

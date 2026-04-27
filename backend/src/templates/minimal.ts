@@ -34,9 +34,10 @@ function boldHtml(text: string): string {
 }
 
 const LEVEL_LABELS = ['', 'Basic', 'Familiar', 'Intermediate', 'Advanced', 'Expert'];
+const LANG_LEVEL_LABELS = ['', 'Basic', 'Conversational', 'Intermediate', 'Advanced', 'Native'];
 
 export function renderMinimal(data: ResumeData): string {
-  const { contact, summary, experience, education, skills, projects } = data;
+  const { contact, summary, experience, education, skills, languages, projects } = data;
   const L = LABELS.minimal[data.language ?? 'en'];
 
   const contactSpans = [
@@ -72,6 +73,12 @@ export function renderMinimal(data: ResumeData): string {
   const skillsHtml = skills.map(s => `
     <span class="skill-item">
       ${s.name} · <span class="skill-level">${LEVEL_LABELS[s.level] ?? ''}</span>
+    </span>
+  `).join('');
+
+  const languagesHtml = (languages ?? []).map(l => `
+    <span class="skill-item">
+      ${l.name} · <span class="skill-level">${LANG_LEVEL_LABELS[l.level] ?? ''}</span>
     </span>
   `).join('');
 
@@ -122,6 +129,13 @@ export function renderMinimal(data: ResumeData): string {
     <div class="section-title">${L.skills}</div>
     <hr class="divider">
     <div class="skills-wrap">${skillsHtml}</div>
+  </div>` : ''}
+
+  ${(languages ?? []).length ? `
+  <div class="section">
+    <div class="section-title">${L.languages}</div>
+    <hr class="divider">
+    <div class="skills-wrap">${languagesHtml}</div>
   </div>` : ''}
 
   ${projects.length ? `

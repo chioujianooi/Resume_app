@@ -28,9 +28,10 @@ const CSS = `
 `;
 
 const LEVEL_LABELS = ['', 'Basic', 'Familiar', 'Intermediate', 'Advanced', 'Expert'];
+const LANG_LEVEL_LABELS = ['', 'Basic', 'Conversational', 'Intermediate', 'Advanced', 'Native'];
 
 export default function MinimalTemplate({ resume }: { resume: ResumeData }) {
-  const { contact, summary, experience, education, skills, projects } = resume;
+  const { contact, summary, experience, education, skills, languages, projects } = resume;
   const L = LABELS.minimal[resume.language ?? 'en'];
 
   return (
@@ -98,6 +99,20 @@ export default function MinimalTemplate({ resume }: { resume: ResumeData }) {
             {skills.map(s => (
               <span key={s.name} className="skill-item">
                 {s.name} · <span className="skill-level">{LEVEL_LABELS[s.level] ?? ''}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {(languages ?? []).length > 0 && (
+        <div className="section">
+          <div className="section-title">{L.languages}</div>
+          <hr className="divider" />
+          <div className="skills-wrap">
+            {(languages ?? []).map(l => (
+              <span key={l.name} className="skill-item">
+                {l.name} · <span className="skill-level">{LANG_LEVEL_LABELS[l.level] ?? ''}</span>
               </span>
             ))}
           </div>

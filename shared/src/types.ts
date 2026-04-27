@@ -46,6 +46,11 @@ export interface SkillEntry {
   level: number;
 }
 
+export interface LanguageEntry {
+  name: string;
+  level: number; // 1–5
+}
+
 export interface ResumeData {
   id: string;
   name?: string;
@@ -54,6 +59,7 @@ export interface ResumeData {
   experience: ExperienceEntry[];
   education: EducationEntry[];
   skills: SkillEntry[];
+  languages: LanguageEntry[];
   projects: ProjectEntry[];
   selectedTemplate: TemplateId;
   language?: ResumeLanguage;
