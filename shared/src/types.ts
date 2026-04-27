@@ -19,7 +19,8 @@ export interface ExperienceEntry {
   startDate: string;
   endDate: string;
   location?: string;
-  bullets: string[];
+  bullets?: string[];
+  description: string;
 }
 
 export interface EducationEntry {

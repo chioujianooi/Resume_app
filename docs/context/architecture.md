@@ -40,9 +40,9 @@ resume_app/
         │   │   ├── ContactSection.tsx  # + dynamic links list + photo upload
         │   │   ├── SummarySection.tsx
         │   │   ├── ExperienceSection.tsx
-        │   │   ├── BulletEditor.tsx    # contenteditable bullet input; renders **bold** visually
+        │   │   ├── RichTextEditor.tsx  # contenteditable rich-text input; bold / bullet list / numbered list toolbar
         │   │   ├── EducationSection.tsx
-        │   │   ├── SkillsSection.tsx   # + proficiency dots (1–5)
+        │   │   ├── SkillsSection.tsx   # + proficiency level (1–5, displayed as text label)
         │   │   └── ProjectsSection.tsx
         │   ├── preview/
         │   │   ├── ResumePreview.tsx   # A4 wrapper (794px) + Export PDF button + Export JSON button
@@ -52,7 +52,7 @@ resume_app/
         │       ├── ModernTemplate.tsx
         │       └── MinimalTemplate.tsx
         └── utils/
-            ├── bulletFormat.ts         # parseBold(text) → React.ReactNode; used by all 3 React templates
+            ├── bulletFormat.ts         # parseBold(text) → React.ReactNode (legacy; no longer used by templates)
             └── templateLabels.ts       # Section label translations for all templates { en, de } (mirrors backend labels.ts)
 ```
 
@@ -166,9 +166,9 @@ BuilderPage
     │   └── tabs: Contact | Summary | Experience | Education | Skills | Projects
     │       ├── ContactSection      (name, email, phone, location, links, photo upload)
     │       ├── SummarySection      (textarea + char count)
-    │       ├── ExperienceSection   (collapsible cards; bullets use BulletEditor — supports **bold**)
+    │       ├── ExperienceSection   (collapsible cards; description field uses RichTextEditor — bold / bullet / numbered list)
     │       ├── EducationSection    (collapsible cards)
-    │       ├── SkillsSection       (tag input + 5-dot level picker per skill)
+    │       ├── SkillsSection       (tag input + text level picker per skill: Basic/Familiar/Intermediate/Advanced/Expert)
     │       └── ProjectsSection     (collapsible cards + tech tag input)
     └── [right]
         ├── TemplatePicker          (classic / modern / minimal buttons + EN / DE language toggle)

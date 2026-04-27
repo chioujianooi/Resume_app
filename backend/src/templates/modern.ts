@@ -21,8 +21,11 @@ export const MODERN_CSS = `
   .entry-title { font-weight: bold; font-size: 10.5pt; }
   .entry-subtitle { color: #555; font-size: 9.5pt; margin-top: 1px; }
   .entry-date { font-size: 9pt; color: #888; white-space: nowrap; }
-  .bullets { margin-top: 4px; padding-left: 16px; list-style-type: disc; }
-  .bullets li { font-size: 10pt; margin-bottom: 2px; overflow-wrap: break-word; }
+  .entry-body { margin-top: 4px; font-size: 10pt; }
+  .entry-body ul { padding-left: 20px; list-style-type: disc; margin: 2px 0; }
+  .entry-body ol { padding-left: 20px; list-style-type: decimal; margin: 2px 0; }
+  .entry-body li { margin-bottom: 2px; overflow-wrap: break-word; }
+  .entry-body p, .entry-body div { margin: 1px 0; }
   .project-tech { font-size: 9pt; color: #666; margin-top: 2px; }
 `;
 
@@ -62,7 +65,7 @@ export function renderModern(data: ResumeData): string {
         <span class="entry-date">${e.startDate} – ${e.endDate}</span>
       </div>
       <div class="entry-subtitle">${e.company}${e.location ? ` · ${e.location}` : ''}</div>
-      ${e.bullets.length ? `<ul class="bullets">${e.bullets.map(b => `<li>${boldHtml(b)}</li>`).join('')}</ul>` : ''}
+      ${(e.description || e.bullets?.length) ? `<div class="entry-body">${e.description || `<ul>${(e.bullets ?? []).map(b => `<li>${boldHtml(b)}</li>`).join('')}</ul>`}</div>` : ''}
     </div>
   `).join('');
 

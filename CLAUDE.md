@@ -24,7 +24,7 @@ All data interfaces live in `shared/src/types.ts` and are consumed by both backe
 **Current schema:**
 - `LinkEntry` — label: string, url: string
 - `ContactInfo` — name, email, phone, location, links?: LinkEntry[], profilePhoto? (base64)
-- `ExperienceEntry` — id, company, title, startDate, endDate, location?, bullets: string[]
+- `ExperienceEntry` — id, company, title, startDate, endDate, location?, description: string (HTML), bullets?: string[] (legacy — kept for backward compat)
 - `EducationEntry` — id, institution, degree, field, startDate, endDate, gpa?
 - `ProjectEntry` — id, name, description, url?, technologies: string[]
 - `SkillEntry` — name, level (1–5)
@@ -83,7 +83,7 @@ Multiple resumes can exist on the backend simultaneously. The `useResume` hook f
 - Template CSS must be identical between backend renderer and React component
 - Do not add fields to `ResumeData` without updating all 6 template files
 - Tailwind CSS is for the app shell UI only — resume templates use inline CSS strings for PDF fidelity
-- Bullet text uses `**word**` for bold. Stored as-is in JSON. Backend templates convert it with a local `boldHtml()` helper; React templates use `parseBold()` from `frontend/src/utils/bulletFormat.ts`. The editor renders bold visually via `BulletEditor.tsx` (contenteditable)
+- Experience descriptions are stored as raw HTML in `ExperienceEntry.description`. The editor (`RichTextEditor.tsx`) uses `document.execCommand` to support bold, bullet lists, and numbered lists; the output is saved as innerHTML. Templates embed this directly as a `.entry-body` div. Old resumes with `bullets: string[]` still load — templates fall back to rendering the bullets array, and the editor auto-migrates them to HTML on first open.
 - Template section labels (e.g. "Experience", "Skills") live in translation maps: `backend/src/templates/labels.ts` and `frontend/src/utils/templateLabels.ts`. Both files must be kept identical. Each template resolves labels via `LABELS.<template>[data.language ?? 'en']`.
 - `ContactInfo.links` is a free-form array of `{ label, url }` entries. All three templates render them as clickable `<a>` hyperlinks. Modern puts them in a dedicated sidebar "Links" section. Classic renders them inline in the contact line separated by ` | `. Minimal renders them as `<span><a>` elements in the contact line; the CSS `span + span::before` rule inserts ` · ` separators automatically.
 

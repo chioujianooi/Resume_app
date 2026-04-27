@@ -1,5 +1,4 @@
 import type { ResumeData } from '@resume-app/shared';
-import { parseBold } from '../../utils/bulletFormat';
 import { LABELS } from '../../utils/templateLabels';
 
 const CSS = `
@@ -16,8 +15,11 @@ const CSS = `
   .entry-title { font-weight: 600; font-size: 10.5pt; }
   .entry-subtitle { font-size: 10pt; color: #666; margin-top: 1px; }
   .entry-date { font-size: 9pt; color: #aaa; white-space: nowrap; }
-  .bullets { margin-top: 5px; padding-left: 16px; list-style-type: disc; }
-  .bullets li { font-size: 10pt; margin-bottom: 3px; color: #444; overflow-wrap: break-word; }
+  .entry-body { margin-top: 5px; font-size: 10pt; color: #444; }
+  .entry-body ul { padding-left: 20px; list-style-type: disc; margin: 2px 0; }
+  .entry-body ol { padding-left: 20px; list-style-type: decimal; margin: 2px 0; }
+  .entry-body li { margin-bottom: 3px; overflow-wrap: break-word; }
+  .entry-body p, .entry-body div { margin: 1px 0; }
   .skills-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
   .skill-item { display: flex; align-items: center; gap: 6px; font-size: 9.5pt; color: #555; border: 1px solid #ddd; padding: 3px 10px; border-radius: 3px; }
   .skill-level { font-size: 8.5pt; color: #888; font-style: italic; }
@@ -64,7 +66,9 @@ export default function MinimalTemplate({ resume }: { resume: ResumeData }) {
                 <span className="entry-date">{e.startDate} – {e.endDate}</span>
               </div>
               {e.location && <div className="entry-subtitle">{e.location}</div>}
-              {e.bullets.length > 0 && <ul className="bullets">{e.bullets.map((b, i) => <li key={i}>{parseBold(b)}</li>)}</ul>}
+              {(e.description || (e.bullets?.length ?? 0) > 0) && (
+                <div className="entry-body" dangerouslySetInnerHTML={{ __html: e.description || `<ul>${(e.bullets ?? []).map(b => `<li>${b}</li>`).join('')}</ul>` }} />
+              )}
             </div>
           ))}
         </div>

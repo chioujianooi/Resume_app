@@ -144,24 +144,39 @@ const L = LABELS.<template>[data.language ?? 'en'];
 
 ## Skill Level Rendering
 
-Skills include a proficiency level (1–5). Templates render this as filled/empty dot circles.
-
-Backend helper (defined in each template file):
+Skills include a proficiency level (1–5). Templates render this as a text label using a lookup array defined in each template file:
 
 ```typescript
-function dots(level: number): string {
-  return [1, 2, 3, 4, 5].map(i =>
-    `<span class="dot ${i <= level ? 'dot-filled' : 'dot-empty'}"></span>`
-  ).join('');
-}
+const LEVEL_LABELS = ['', 'Basic', 'Familiar', 'Intermediate', 'Advanced', 'Expert'];
+// usage: LEVEL_LABELS[s.level] ?? ''
 ```
 
-CSS (same in all templates, colors vary per template):
-```css
-.dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
-.dot-filled { background: #1a1a1a; }
-.dot-empty  { background: #ccc; }
+Classic and Minimal templates display skills as `"Name · Level"` inline. Modern displays them in a sidebar row with name left-aligned and label right-aligned.
+
+---
+
+## Experience Description (Rich Text)
+
+`ExperienceEntry.description` stores the user's experience content as a raw HTML string produced by `RichTextEditor.tsx`. The editor uses `document.execCommand` to support bold, unordered lists, and ordered lists; its `innerHTML` is saved directly.
+
+Templates embed the HTML inside a `.entry-body` div:
+
+```html
+<div class="entry-body">{description}</div>
 ```
+
+CSS in all 6 templates styles nested list elements:
+
+```css
+.entry-body ul { padding-left: 20px; list-style-type: disc; margin: 2px 0; }
+.entry-body ol { padding-left: 20px; list-style-type: decimal; margin: 2px 0; }
+.entry-body li { margin-bottom: 2px; overflow-wrap: break-word; }
+.entry-body p, .entry-body div { margin: 1px 0; }
+```
+
+**Backward compatibility:** Old resumes saved before this feature have `bullets: string[]` and no `description`. Both templates and the editor handle this:
+- Templates: if `description` is empty/absent, fall back to rendering `bullets` as a `<ul>` list.
+- Editor: when a card is opened, if `description` is empty but `bullets` is non-empty, the editor auto-converts them to HTML and triggers a save — so the resume is migrated on next auto-save.
 
 ---
 

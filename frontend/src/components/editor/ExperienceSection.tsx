@@ -1,11 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { ExperienceEntry } from '@resume-app/shared';
 import { v4 as uuidv4 } from 'uuid';
-import BulletEditor from './BulletEditor';
+import RichTextEditor from './RichTextEditor';
 
 interface Props {
   experience: ExperienceEntry[];
   onChange: (e: ExperienceEntry[]) => void;
+}
+
+function boldHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+}
+
+function bulletsToHtml(bullets: string[]): string {
+  return `<ul>${bullets.map(b => `<li>${boldHtml(b)}</li>`).join('')}</ul>`;
 }
 
 function EntryCard({ entry, onUpdate, onDelete }: {
@@ -16,13 +26,12 @@ function EntryCard({ entry, onUpdate, onDelete }: {
   const [open, setOpen] = useState(false);
   const set = (key: keyof ExperienceEntry) => (v: string) => onUpdate({ ...entry, [key]: v });
 
-  const updateBullet = (i: number, v: string) => {
-    const bullets = [...entry.bullets];
-    bullets[i] = v;
-    onUpdate({ ...entry, bullets });
-  };
-  const addBullet = () => onUpdate({ ...entry, bullets: [...entry.bullets, ''] });
-  const removeBullet = (i: number) => onUpdate({ ...entry, bullets: entry.bullets.filter((_, idx) => idx !== i) });
+  // Migrate old bullets array to HTML description on first open
+  useEffect(() => {
+    if (open && !entry.description && entry.bullets && entry.bullets.length > 0) {
+      onUpdate({ ...entry, description: bulletsToHtml(entry.bullets) });
+    }
+  }, [open]);
 
   return (
     <div className="border border-slate-200 rounded-lg overflow-hidden">
@@ -78,23 +87,12 @@ function EntryCard({ entry, onUpdate, onDelete }: {
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-slate-600 mb-2">Bullet Points</label>
-            <div className="space-y-2">
-              {entry.bullets.map((b, i) => (
-                <div key={i} className="flex gap-2">
-                  <BulletEditor
-                    value={b}
-                    onChange={v => updateBullet(i, v)}
-                    placeholder="Achieved X by doing Y, resulting in Z"
-                  />
-                  <button onClick={() => removeBullet(i)} className="text-slate-400 hover:text-red-500 text-sm px-2 mt-1">✕</button>
-                </div>
-              ))}
-            </div>
-            <button onClick={addBullet}
-              className="mt-2 text-xs text-blue-600 hover:text-blue-800 font-medium">
-              + Add bullet
-            </button>
+            <label className="block text-xs font-medium text-slate-600 mb-1">Description</label>
+            <RichTextEditor
+              value={entry.description}
+              onChange={v => onUpdate({ ...entry, description: v })}
+              placeholder="Describe your responsibilities and achievements..."
+            />
           </div>
         </div>
       )}
@@ -104,7 +102,7 @@ function EntryCard({ entry, onUpdate, onDelete }: {
 
 export default function ExperienceSection({ experience, onChange }: Props) {
   const add = () => onChange([...experience, {
-    id: uuidv4(), company: '', title: '', startDate: '', endDate: 'Present', location: '', bullets: [],
+    id: uuidv4(), company: '', title: '', startDate: '', endDate: 'Present', location: '', description: '',
   }]);
 
   const update = (i: number, e: ExperienceEntry) => {

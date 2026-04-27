@@ -1,5 +1,4 @@
 import type { ResumeData } from '@resume-app/shared';
-import { parseBold } from '../../utils/bulletFormat';
 import { LABELS } from '../../utils/templateLabels';
 
 const CSS = `
@@ -16,8 +15,11 @@ const CSS = `
   .entry-title { font-weight: bold; font-size: 10.5pt; }
   .entry-subtitle { font-style: italic; font-size: 10pt; color: #444; }
   .entry-date { font-size: 9.5pt; color: #555; white-space: nowrap; }
-  .bullets { margin-top: 4px; padding-left: 16px; list-style-type: disc; }
-  .bullets li { font-size: 10pt; margin-bottom: 2px; overflow-wrap: break-word; }
+  .entry-body { margin-top: 4px; font-size: 10pt; color: #444; }
+  .entry-body ul { padding-left: 20px; list-style-type: disc; margin: 2px 0; }
+  .entry-body ol { padding-left: 20px; list-style-type: decimal; margin: 2px 0; }
+  .entry-body li { margin-bottom: 2px; overflow-wrap: break-word; }
+  .entry-body p, .entry-body div { margin: 1px 0; }
   .skills-list { display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 10pt; }
   .skill-item { font-size: 10pt; }
   .skill-level { color: #666; font-style: italic; }
@@ -70,8 +72,8 @@ export default function ClassicTemplate({ resume }: { resume: ResumeData }) {
                 <span className="entry-date">{e.startDate} – {e.endDate}</span>
               </div>
               <div className="entry-subtitle">{e.company}{e.location ? `, ${e.location}` : ''}</div>
-              {e.bullets.length > 0 && (
-                <ul className="bullets">{e.bullets.map((b, i) => <li key={i}>{parseBold(b)}</li>)}</ul>
+              {(e.description || (e.bullets?.length ?? 0) > 0) && (
+                <div className="entry-body" dangerouslySetInnerHTML={{ __html: e.description || `<ul>${(e.bullets ?? []).map(b => `<li>${b}</li>`).join('')}</ul>` }} />
               )}
             </div>
           ))}
