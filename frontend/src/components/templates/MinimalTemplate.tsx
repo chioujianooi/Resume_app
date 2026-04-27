@@ -2,8 +2,9 @@ import type { ResumeData } from '@resume-app/shared';
 import { LABELS } from '../../utils/templateLabels';
 
 const CSS = `
+  @page { margin: 40px 56px; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  .resume-minimal { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 10.5pt; color: #333; padding: 48px 56px; line-height: 1.6; }
+  .resume-minimal { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 10.5pt; color: #333; line-height: 1.6; }
   .name { font-size: 30pt; font-weight: 300; letter-spacing: -0.5px; margin-bottom: 6px; color: #111; }
   .contact-line { font-size: 9.5pt; color: #666; margin-bottom: 36px; }
   .contact-line span + span::before { content: '  ·  '; color: #bbb; }
@@ -35,7 +36,7 @@ export default function MinimalTemplate({ resume }: { resume: ResumeData }) {
   const L = LABELS.minimal[resume.language ?? 'en'];
 
   return (
-    <div className="resume-minimal" style={{ fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif', padding: '48px 56px' }}>
+    <div className="resume-minimal" style={{ fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif', padding: '40px 56px' }}>
       <style>{CSS}</style>
 
       <div className="name">{contact.name || 'Your Name'}</div>

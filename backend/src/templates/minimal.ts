@@ -2,8 +2,9 @@ import { ResumeData } from '@resume-app/shared';
 import { LABELS } from './labels';
 
 export const MINIMAL_CSS = `
+  @page { margin: 40px 56px; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 10.5pt; color: #333; padding: 48px 56px; line-height: 1.6; }
+  body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 10.5pt; color: #333; line-height: 1.6; }
   .name { font-size: 30pt; font-weight: 300; letter-spacing: -0.5px; margin-bottom: 6px; color: #111; }
   .contact-line { font-size: 9.5pt; color: #666; margin-bottom: 36px; }
   .contact-line span + span::before { content: '  ·  '; color: #bbb; }

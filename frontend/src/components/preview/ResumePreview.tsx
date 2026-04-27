@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useLayoutEffect } from 'react';
 import type { ResumeData } from '@resume-app/shared';
 import { getPdfUrl } from '../../api/resumeApi';
 import ClassicTemplate from '../templates/ClassicTemplate';
@@ -9,8 +9,38 @@ interface Props {
   resume: ResumeData;
 }
 
+const PAGE_HEIGHT = 1123;
+
+// visualMargin: white space (px) at the top and bottom of every page box (= @page top/bottom).
+// clipOffset: the template root div's top padding — content to skip before real content starts.
+// For Modern, @page margin is 40px but the root div has no padding, so clipOffset=0.
+const TEMPLATE_PAGE_CONFIG: Record<string, { visualMargin: number; clipOffset: number }> = {
+  classic:  { visualMargin: 40, clipOffset: 40 },
+  minimal:  { visualMargin: 40, clipOffset: 40 },
+  modern:   { visualMargin: 0,  clipOffset: 0  },
+};
+
 export default function ResumePreview({ resume }: Props) {
   const [exporting, setExporting] = useState(false);
+  const [numPages, setNumPages] = useState(1);
+  const measureRef = useRef<HTMLDivElement>(null);
+
+  const { visualMargin, clipOffset } = TEMPLATE_PAGE_CONFIG[resume.selectedTemplate] ?? { visualMargin: 40, clipOffset: 40 };
+  const contentPerPage = PAGE_HEIGHT - 2 * visualMargin;
+
+  useLayoutEffect(() => {
+    const el = measureRef.current;
+    if (!el) return;
+    const update = () => {
+      if (!measureRef.current) return;
+      const h = measureRef.current.scrollHeight;
+      setNumPages(Math.max(1, Math.ceil((h - 2 * clipOffset) / contentPerPage)));
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [resume]);
 
   async function handleExport() {
     setExporting(true);
@@ -92,25 +122,48 @@ export default function ResumePreview({ resume }: Props) {
 
       {/* A4 page preview */}
       <div className="flex-1 overflow-auto bg-slate-200 p-6">
-        <div className="mx-auto" style={{ width: '794px' }}>
-          <div
-            className="bg-white shadow-xl relative"
-            style={{ width: '794px', minHeight: '1123px' }}
-          >
-            {renderTemplate()}
-            {/* Page break overlay: 4px slate line at every 1123px (A4 height) */}
-            <div
-              aria-hidden
-              style={{
-                position: 'absolute',
-                inset: 0,
-                backgroundImage: 'repeating-linear-gradient(to bottom, transparent 0px, transparent 1119px, #94a3b8 1119px, #94a3b8 1123px)',
-                pointerEvents: 'none',
-                zIndex: 10,
-              }}
-            />
+        {resume.selectedTemplate === 'modern' ? (
+          // Modern template handles its own pagination — render directly with page gap + shadow
+          <div className="mx-auto" style={{ width: '794px' }}>
+            <style>{`
+              .modern-preview { display: flex; flex-direction: column; gap: 16px; }
+              .modern-preview .resume-modern { box-shadow: 0 20px 25px -5px rgba(0,0,0,.1), 0 8px 10px -6px rgba(0,0,0,.1); }
+            `}</style>
+            <div className="modern-preview">
+              <ModernTemplate resume={resume} />
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="mx-auto" style={{ width: '794px', position: 'relative' }}>
+            {/* Hidden render used only to measure total content height */}
+            <div
+              ref={measureRef}
+              aria-hidden
+              style={{ position: 'absolute', visibility: 'hidden', pointerEvents: 'none', width: '794px', top: 0, left: 0 }}
+            >
+              {renderTemplate()}
+            </div>
+
+            {/* One white A4 box per page with equal top/bottom margins on every page */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {Array.from({ length: numPages }, (_, i) => (
+                <div
+                  key={i}
+                  className="bg-white shadow-xl"
+                  style={{ width: '794px', height: `${PAGE_HEIGHT}px`, overflow: 'hidden', position: 'relative' }}
+                >
+                  {/* Content-clip sits inside the margin areas (top/bottom visualMargin px stay white) */}
+                  <div style={{ position: 'absolute', top: visualMargin, height: contentPerPage, width: '100%', overflow: 'hidden' }}>
+                    {/* Content-inner is offset so the correct page slice is visible */}
+                    <div style={{ position: 'absolute', top: `${-(clipOffset + i * contentPerPage)}px`, width: '100%' }}>
+                      {renderTemplate()}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
