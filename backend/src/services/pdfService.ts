@@ -40,17 +40,18 @@ export async function generatePdf(data: ResumeData): Promise<Buffer> {
       'document.body.dataset.renderDone === "true"',
       { timeout: 10000 }
     );
-    await page.screenshot({
-  path: "debug.png",
-  fullPage: true
-});
     const pdf = await page.pdf({
       format: 'A4',
       printBackground: true,
       margin: { top: '0', right: '0', bottom: '0', left: '0' },
     });
     return Buffer.from(pdf);
+  } catch (err) {
+    // Browser may have crashed — discard the instance so next request gets a fresh one.
+    browser = null;
+    throw err;
   } finally {
-    await page.close();
+    // page.close() throws if the browser already crashed; swallow it.
+    await page.close().catch(() => {});
   }
 }

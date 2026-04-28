@@ -30,7 +30,21 @@ export default function ContactSection({ contact, onChange }: Props) {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => onChange({ ...contact, profilePhoto: reader.result as string });
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const SIZE = 200; // render at 2× the 100px display size
+        const scale = Math.min(1, SIZE / Math.max(img.width, img.height));
+        const w = Math.round(img.width * scale);
+        const h = Math.round(img.height * scale);
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext('2d')!.drawImage(img, 0, 0, w, h);
+        onChange({ ...contact, profilePhoto: canvas.toDataURL('image/jpeg', 0.85) });
+      };
+      img.src = reader.result as string;
+    };
     reader.readAsDataURL(file);
   };
 

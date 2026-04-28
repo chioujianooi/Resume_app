@@ -92,7 +92,7 @@ export default function ClassicTemplate({ resume }: { resume: ResumeData }) {
                 <span className="entry-title">{e.degree} in {e.field}</span>
                 <span className="entry-date">{e.startDate} – {e.endDate}</span>
               </div>
-              <div className="entry-subtitle">{e.institution}{e.gpa ? ` · GPA: ${e.gpa}` : ''}</div>
+              <div className="entry-subtitle">{e.institution}{e.gpa ? ` · ${L.gpa}: ${e.gpa}` : ''}</div>
             </div>
           ))}
         </div>

@@ -86,7 +86,7 @@ export default function MinimalTemplate({ resume }: { resume: ResumeData }) {
                 <span className="entry-title">{e.institution}</span>
                 <span className="entry-date">{e.startDate} – {e.endDate}</span>
               </div>
-              <div className="entry-subtitle">{e.degree} in {e.field}{e.gpa ? ` · GPA: ${e.gpa}` : ''}</div>
+              <div className="entry-subtitle">{e.degree} in {e.field}{e.gpa ? ` · ${L.gpa}: ${e.gpa}` : ''}</div>
             </div>
           ))}
         </div>
