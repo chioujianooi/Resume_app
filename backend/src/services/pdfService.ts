@@ -1,6 +1,7 @@
 import puppeteer, { Browser } from 'puppeteer';
 import { ResumeData } from '@resume-app/shared';
-import { renderTemplate } from '../templates';
+
+const FRONTEND_URL = process.env.FRONTEND_URL ?? 'http://localhost:5173';
 
 let browser: Browser | null = null;
 
@@ -31,8 +32,18 @@ export async function generatePdf(data: ResumeData): Promise<Buffer> {
   const b = await getBrowser();
   const page = await b.newPage();
   try {
-    const html = renderTemplate(data, data.selectedTemplate);
-    await page.setContent(html, { waitUntil: 'networkidle0' });
+    await page.setViewport({ width: 794, height: 1123 });
+    await page.goto(`${FRONTEND_URL}/resume/${data.id}/print`, {
+      waitUntil: 'networkidle0',
+    });
+    await page.waitForFunction(
+      'document.body.dataset.renderDone === "true"',
+      { timeout: 10000 }
+    );
+    await page.screenshot({
+  path: "debug.png",
+  fullPage: true
+});
     const pdf = await page.pdf({
       format: 'A4',
       printBackground: true,

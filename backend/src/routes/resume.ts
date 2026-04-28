@@ -1,7 +1,12 @@
 import { Router } from 'express';
 import { createResume, getResume, getResumes, updateResume, removeResume } from '../controllers/resumeController';
 import { exportPdf } from '../controllers/pdfController';
-import { TEMPLATES } from '../templates';
+
+const TEMPLATES = [
+  { id: 'classic',  name: 'Classic'  },
+  { id: 'modern',   name: 'Modern'   },
+  { id: 'minimal',  name: 'Minimal'  },
+];
 
 const router = Router();
 

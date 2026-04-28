@@ -18,18 +18,14 @@ resume_app/
 │       ├── services/
 │       │   ├── storageService.ts       # saveResume, loadResume, resumeExists, listResumes, deleteResume
 │       │   └── pdfService.ts           # getBrowser (lazy), generatePdf, closeBrowser
-│       ├── templates/
-│       │   ├── index.ts                # TEMPLATES metadata + renderTemplate() dispatcher
-│       │   ├── labels.ts               # Section label translations for all templates { en, de }
-│       │   ├── classic.ts              # renderClassic(data) → HTML string
-│       │   ├── modern.ts               # renderModern(data) → HTML string
-│       │   └── minimal.ts              # renderMinimal(data) → HTML string
 │       └── data/resumes/               # Persisted JSON files: {id}.json
 └── frontend/
     └── src/
         ├── api/resumeApi.ts            # All fetch() calls (incl. listResumes)
         ├── hooks/useResume.ts          # State + auto-save + multi-resume management
-        ├── pages/BuilderPage.tsx       # Top-level page; loading/error/saving states
+        ├── pages/
+│       │   ├── BuilderPage.tsx         # Top-level page; loading/error/saving states
+│       │   └── PrintPage.tsx           # Print-only view for Puppeteer PDF generation
         ├── components/
         │   ├── layout/
         │   │   ├── AppShell.tsx        # 42/58 split-panel layout; headerLeft/headerRight slots
@@ -54,7 +50,7 @@ resume_app/
         │       └── MinimalTemplate.tsx
         └── utils/
             ├── bulletFormat.ts         # parseBold(text) → React.ReactNode (legacy; no longer used by templates)
-            └── templateLabels.ts       # Section label translations for all templates { en, de } (mirrors backend labels.ts)
+            └── templateLabels.ts       # Section label translations for all templates { en, de }
 ```
 
 ---
@@ -144,11 +140,15 @@ User clicks "Export PDF"
   → GET /api/resumes/:id/pdf
   → pdfController.exportPdf
   → storageService.loadResume(id)
-  → templates/index.renderTemplate(data, templateId)  → HTML string
   → pdfService.generatePdf(data)
       → getBrowser() [lazy Puppeteer init]
-      → page.setContent(html, { waitUntil: 'networkidle0' })
-      → page.pdf({ format: 'A4', printBackground: true })
+      → page.setViewport({ width: 794, height: 1123 })
+      → page.goto('http://localhost:5173/resume/:id/print', { waitUntil: 'networkidle0' })
+           └─ PrintPage.tsx fetches resume, renders the correct React template
+                └─ ModernTemplate: measures blocks, paginates, calls onReady()
+                   Classic/Minimal: document.fonts.ready → signalReady()
+      → page.waitForFunction('document.body.dataset.renderDone === "true"')
+      → page.pdf({ format: 'A4', printBackground: true, margin: 0 })
   → response: Content-Type: application/pdf, Content-Disposition: attachment
   → browser creates <a> and clicks it to trigger download
 ```
@@ -214,27 +214,22 @@ Controllers never call other controllers. Services never import from controllers
 
 ## Template Architecture
 
-Each template exists in two mirrors:
+The three React template components are the single source of truth for visual output:
 
-| | Backend | Frontend |
-|---|---|---|
-| File | `backend/src/templates/{name}.ts` | `frontend/src/components/templates/{Name}Template.tsx` |
-| Export | `renderXxx(data: ResumeData): string` | `function XxxTemplate({ resume }: { resume: ResumeData })` |
-| CSS | Embedded in `<style>` in the returned HTML string | Injected via `<style>{CSS}</style>` inside JSX |
-| Used by | Puppeteer PDF generation | Live preview in browser |
+| File | Export | Used by |
+|------|--------|---------|
+| `frontend/src/components/templates/ClassicTemplate.tsx` | `function ClassicTemplate({ resume })` | Live preview + PDF (via Puppeteer) |
+| `frontend/src/components/templates/ModernTemplate.tsx` | `function ModernTemplate({ resume, onReady? })` | Live preview + PDF (via Puppeteer) |
+| `frontend/src/components/templates/MinimalTemplate.tsx` | `function MinimalTemplate({ resume })` | Live preview + PDF (via Puppeteer) |
 
-The CSS constant (`const CSS = \`...\``) must be identical in both files. This is enforced by convention — there is no build-time check.
+Each component injects its own CSS via `<style>{CSS}</style>` inside JSX. No backend template files exist — there is nothing to keep in sync.
 
-Section label translations (e.g. "Experience" → "Berufserfahrung") live in a parallel pair of files that must also be kept in sync:
+**PDF path:** Puppeteer navigates to `frontend/src/pages/PrintPage.tsx` (`/resume/:id/print`), which fetches the resume and renders the appropriate template component. The component signals readiness by setting `document.body.dataset.renderDone = 'true'`, which Puppeteer waits on before capturing the PDF.
 
-| | Backend | Frontend |
-|---|---|---|
-| File | `backend/src/templates/labels.ts` | `frontend/src/utils/templateLabels.ts` |
-| Shape | `LABELS.<template>.<lang>.<key>` | identical |
+- **Modern:** uses `useLayoutEffect` to measure block heights in a hidden container, paginate content into A4 pages, then calls `onReady()` via `useEffect` after the browser paints.
+- **Classic / Minimal:** CSS-only layout; `PrintPage` calls `document.fonts.ready.then(signalReady)` once the resume data is loaded.
 
-Each template renderer resolves its labels with `const L = LABELS.<template>[data.language ?? 'en']` and uses `L.<key>` wherever a section heading or fixed label appears.
-
-The dispatcher `renderTemplate(data, templateId)` in `backend/src/templates/index.ts` routes to the correct renderer.
+Section label translations (e.g. "Experience" → "Berufserfahrung") live exclusively in `frontend/src/utils/templateLabels.ts`. Each template resolves the active language with `const L = LABELS.<template>[data.language ?? 'en']`.
 
 ---
 

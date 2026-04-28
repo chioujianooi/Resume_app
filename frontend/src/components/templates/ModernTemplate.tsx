@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect, useRef, type ReactNode } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef, type ReactNode } from 'react';
 import type { ResumeData } from '@resume-app/shared';
 import { LABELS } from '../../utils/templateLabels';
 
@@ -10,7 +10,7 @@ const USABLE_HEIGHT = 1043;
 const CSS = `
   @page { margin: 0; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  .resume-modern { font-family: 'Arial', sans-serif; font-size: 10.5pt; color: #2d2d2d; display: flex; width: 794px; height: 1123px; overflow: hidden; }
+  .resume-modern { font-family: 'Arial', 'Liberation Sans', sans-serif; font-size: 10.5pt; color: #2d2d2d; display: flex; width: 794px; height: 1123px; overflow: hidden; }
   .sidebar { width: 200px; min-width: 200px; background: #1e3a5f; color: #fff; padding: 32px 20px; overflow: hidden; }
   .main { flex: 1; min-width: 0; padding: 40px 32px 40px 28px; overflow: hidden; }
   .profile-photo { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; display: block; margin: 0 auto 16px; border: 3px solid #2e5a8a; }
@@ -179,7 +179,7 @@ function buildBlocks(resume: ResumeData): ReactNode[] {
   return blocks;
 }
 
-export default function ModernTemplate({ resume }: { resume: ResumeData }) {
+export default function ModernTemplate({ resume, onReady }: { resume: ResumeData; onReady?: () => void }) {
   const [pages, setPages] = useState<ReactNode[][] | null>(null);
   const measureRef = useRef<HTMLDivElement>(null);
 
@@ -224,6 +224,12 @@ export default function ModernTemplate({ resume }: { resume: ResumeData }) {
     run();
     return () => { cancelled = true; };
   }, [resume]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // useEffect (not useLayoutEffect) fires after the browser paints, so Puppeteer
+  // reads the DOM only once all paginated pages are visible.
+  useEffect(() => {
+    if (pages !== null) onReady?.();
+  }, [pages]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>

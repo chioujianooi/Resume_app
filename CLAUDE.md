@@ -34,7 +34,7 @@ All data interfaces live in `shared/src/types.ts` and are consumed by both backe
 - `TemplateId` — `'classic' | 'modern' | 'minimal'`
 - `ResumeLanguage` — `'en' | 'de'`
 
-**Rule:** changing the schema requires updating `shared/src/types.ts` AND all 6 template files (3 backend renderers + 3 React components). Fields that are app-shell metadata only (e.g. `name`) do not need to be rendered in templates and can be safely ignored by them.
+**Rule:** changing the schema requires updating `shared/src/types.ts` AND the 3 React template components in `frontend/src/components/templates/`. Fields that are app-shell metadata only (e.g. `name`) do not need to be rendered in templates and can be safely ignored by them.
 
 ## API Endpoints
 
@@ -52,15 +52,6 @@ All routes are mounted at `/api` on the backend.
 
 **Route ordering note:** `GET /api/resumes` must be registered before `GET /api/resumes/:id` in the Express router. Express matches routes in declaration order; reversing them would cause the literal string `"resumes"` to be captured as an `:id` param.
 
-## Template Parity Rule
-
-Every template exists in two mirrors that must stay in sync:
-
-- **Backend renderer** `backend/src/templates/{name}.ts` — `renderXxx(data): string` returning a full HTML document with embedded `<style>`. Puppeteer renders this to PDF.
-- **React component** `frontend/src/components/templates/{Name}Template.tsx` — pure component that injects the same CSS string via a `<style>` tag.
-
-The CSS is defined as a string constant in each file. Any visual change to a template must be made in both files. This is what keeps the live preview pixel-accurate with the exported PDF.
-
 ## Storage
 
 Resumes are persisted as JSON files at `backend/src/data/resumes/{id}.json`. Writes are atomic (write to `.tmp`, then `fs.rename`). No database.
@@ -69,7 +60,9 @@ Resumes are persisted as JSON files at `backend/src/data/resumes/{id}.json`. Wri
 
 Uses Puppeteer (headless Chromium). The browser instance is lazy-initialized on the first PDF request and reused for subsequent requests. It is closed on `SIGTERM`/`SIGINT`.
 
-**WSL2 requirement:** Chromium needs system libraries not present in WSL2 by default. Run once: `bash setup.sh`
+Puppeteer does **not** use a backend HTML renderer. Instead it navigates to the frontend print route (`/resume/:id/print`) which renders the same React template components used for the live preview. This guarantees pixel-identical font, spacing, and layout between preview and PDF. The page sets `document.body.dataset.renderDone = 'true'` when rendering is complete; Puppeteer waits for this signal before capturing the PDF.
+
+**WSL2 requirement:** Chromium needs system libraries and fonts not present in WSL2 by default. Run once: `bash setup.sh`
 
 ## Session Persistence
 
@@ -81,11 +74,10 @@ Multiple resumes can exist on the backend simultaneously. The `useResume` hook f
 
 - PDF logic lives exclusively in `backend/src/services/pdfService.ts`
 - Business logic must not be duplicated between frontend and backend
-- Template CSS must be identical between backend renderer and React component
-- Do not add fields to `ResumeData` without updating all 6 template files
+- Do not add fields to `ResumeData` without updating the 3 React template components
 - Tailwind CSS is for the app shell UI only — resume templates use inline CSS strings for PDF fidelity
 - Experience descriptions are stored as raw HTML in `ExperienceEntry.description`. The editor (`RichTextEditor.tsx`) uses `document.execCommand` to support bold, bullet lists, and numbered lists; the output is saved as innerHTML. Templates embed this directly as a `.entry-body` div. Old resumes with `bullets: string[]` still load — templates fall back to rendering the bullets array, and the editor auto-migrates them to HTML on first open.
-- Template section labels (e.g. "Experience", "Skills") live in translation maps: `backend/src/templates/labels.ts` and `frontend/src/utils/templateLabels.ts`. Both files must be kept identical. Each template resolves labels via `LABELS.<template>[data.language ?? 'en']`.
+- Template section labels (e.g. "Experience", "Skills") live in `frontend/src/utils/templateLabels.ts`. Each template resolves labels via `LABELS.<template>[data.language ?? 'en']`.
 - `ContactInfo.links` is a free-form array of `{ label, url }` entries. All three templates render them as clickable `<a>` hyperlinks. Modern puts them in a dedicated sidebar "Links" section. Classic renders them inline in the contact line separated by ` | `. Minimal renders them as `<span><a>` elements in the contact line; the CSS `span + span::before` rule inserts ` · ` separators automatically.
 
 ## Docs

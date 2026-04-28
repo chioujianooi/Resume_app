@@ -7,9 +7,7 @@
 2. Frontend: fetch(getPdfUrl(id))  →  GET /api/resumes/:id/pdf
 3. pdfController.exportPdf()
    a. storageService.loadResume(id)        — read {id}.json from disk
-   b. templates/index.renderTemplate(data, data.selectedTemplate)
-                                           — produce full HTML string
-   c. pdfService.generatePdf(data)         — Puppeteer renders HTML → PDF buffer
+   b. pdfService.generatePdf(data)         — Puppeteer opens print route → PDF buffer
 4. Response: Content-Type: application/pdf
              Content-Disposition: attachment; filename="{name}-resume.pdf"
 5. Frontend: creates a temporary <a> element, sets href to blob URL, clicks it
@@ -18,43 +16,21 @@
 
 ---
 
-## Template HTML Renderers
+## Print Route
 
-Each template exports a function:
+`frontend/src/pages/PrintPage.tsx` is a dedicated render-only page at `/resume/:id/print`. It has no app shell, no toolbar — only the template component.
 
-```typescript
-export function renderXxx(data: ResumeData): string
+```
+PrintPage
+  → fetchResume(id)               — GET /api/resumes/:id
+  → renders ClassicTemplate | ModernTemplate | MinimalTemplate
+  → sets document.body.dataset.renderDone = 'true' when ready
 ```
 
-The function returns a complete HTML document:
+Readiness signaling differs by template type:
 
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <style>/* full CSS string */</style>
-</head>
-<body>
-  <!-- resume layout -->
-</body>
-</html>
-```
-
-CSS is defined as a module-level string constant (`const CLASSIC_CSS = \`...\``). It is embedded directly in the `<style>` tag — no external stylesheets, no web fonts loaded over HTTP. This ensures Puppeteer can render the page without any network requests.
-
-The dispatcher in `backend/src/templates/index.ts`:
-
-```typescript
-export function renderTemplate(data: ResumeData, templateId: TemplateId): string {
-  switch (templateId) {
-    case 'modern':  return renderModern(data);
-    case 'minimal': return renderMinimal(data);
-    case 'classic':
-    default:        return renderClassic(data);
-  }
-}
-```
+- **Modern** — `ModernTemplate` accepts an `onReady` prop. After `useLayoutEffect` paginates blocks into A4 pages, `useEffect` calls `onReady()` post-paint so Puppeteer reads the DOM only after all pages are visible.
+- **Classic / Minimal** — CSS-only layout; `PrintPage` calls `document.fonts.ready.then(signalReady)` once the resume state is set.
 
 ---
 
@@ -97,30 +73,29 @@ await page.pdf({
 })
 ```
 
-`waitUntil: 'networkidle0'` is used in `page.setContent()` to ensure all rendering is complete before the PDF is captured.
+Puppeteer navigates to the frontend print route rather than using `page.setContent()`:
+
+```typescript
+await page.setViewport({ width: 794, height: 1123 });
+await page.goto(`${FRONTEND_URL}/resume/${data.id}/print`, { waitUntil: 'networkidle0' });
+await page.waitForFunction('document.body.dataset.renderDone === "true"', { timeout: 10000 });
+```
+
+`FRONTEND_URL` defaults to `http://localhost:5173` (Vite dev server). Set the env var for production. `waitForFunction` takes a string — not an arrow function — to avoid a TypeScript error from Node.js's lack of a DOM type context.
 
 ---
 
 ## Preview ↔ PDF Parity
 
-The live preview in the browser and the exported PDF use the same CSS. This works because:
+The live preview and the exported PDF are pixel-identical because they use the same code path. Puppeteer navigates to `/resume/:id/print`, which renders the same React template component that the builder preview uses. There are no separate backend template files to drift out of sync.
 
-1. Each backend template file defines `const CSS = \`...\``
-2. The corresponding React component (`frontend/src/components/templates/`) defines an identical `const CSS` and injects it with `<style>{CSS}</style>`
-3. Both render the same data structure (`ResumeData`)
-
-Any change to the visual design of a template must be made in **both** files:
-- `backend/src/templates/{name}.ts`
-- `frontend/src/components/templates/{Name}Template.tsx`
+Any visual change to a template is made in one place only: `frontend/src/components/templates/{Name}Template.tsx`.
 
 ---
 
 ## Language Support (i18n)
 
-Section headings (e.g. "Experience", "Skills") are looked up from translation maps rather than hardcoded. Two files hold identical maps and must stay in sync:
-
-- `backend/src/templates/labels.ts`
-- `frontend/src/utils/templateLabels.ts`
+Section headings (e.g. "Experience", "Skills") are looked up from a translation map rather than hardcoded. The single source of truth is `frontend/src/utils/templateLabels.ts`.
 
 Each template resolves the active language at render time:
 
@@ -182,7 +157,7 @@ Templates embed the HTML inside a `.entry-body` div:
 <div class="entry-body">{description}</div>
 ```
 
-CSS in all 6 templates styles nested list elements:
+CSS in all 3 templates styles nested list elements:
 
 ```css
 .entry-body ul { padding-left: 20px; list-style-type: disc; margin: 2px 0; }
@@ -237,7 +212,8 @@ Puppeteer bundles its own Chromium binary but Chromium requires native system li
 | `libnss3` | TLS / certificate handling |
 | `libnspr4` | Netscape Portable Runtime (NSS dependency) |
 | `libasound2` | ALSA audio (Chrome links against it even in headless mode) |
+| `fonts-liberation` | Liberation Sans — metric-identical substitute for Arial. Without it, WSL2 Chromium substitutes DejaVu Sans, producing different character widths and breaking layout/pagination. |
 
 Install: `bash setup.sh` (one-time, requires sudo)
 
-Without these libraries, `puppeteer.launch()` will throw `error while loading shared libraries: libnss3.so: cannot open shared object file`.
+Without `libnss3`, `puppeteer.launch()` will throw `error while loading shared libraries: libnss3.so: cannot open shared object file`. Without `fonts-liberation`, text metrics differ between the preview (host browser) and the PDF (Chromium in WSL2), causing font and spacing mismatches.
