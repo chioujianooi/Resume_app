@@ -12,3 +12,18 @@ export const LABELS = {
     de: { about: 'Über mich', experience: 'Berufserfahrung', education: 'Ausbildung', skills: 'Kenntnisse', languages: 'Sprachen', projects: 'Projekte', gpa: 'Note' },
   },
 } as const;
+
+export const COVER_LETTER_LABELS = {
+  en: {
+    subject: 'Re: Application for',
+    at: 'at',
+    positionPlaceholder: '[Position]',
+    companyPlaceholder: '[Company]',
+  },
+  de: {
+    subject: 'Betr.: Bewerbung als',
+    at: 'bei',
+    positionPlaceholder: '[Stelle]',
+    companyPlaceholder: '[Unternehmen]',
+  },
+} as const;

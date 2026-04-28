@@ -1,5 +1,5 @@
 import puppeteer, { Browser } from 'puppeteer';
-import { ResumeData } from '@resume-app/shared';
+import { ResumeData, CoverLetterData } from '@resume-app/shared';
 
 const FRONTEND_URL = process.env.FRONTEND_URL ?? 'http://localhost:5173';
 
@@ -52,6 +52,32 @@ export async function generatePdf(data: ResumeData): Promise<Buffer> {
     throw err;
   } finally {
     // page.close() throws if the browser already crashed; swallow it.
+    await page.close().catch(() => {});
+  }
+}
+
+export async function generateCoverLetterPdf(data: CoverLetterData): Promise<Buffer> {
+  const b = await getBrowser();
+  const page = await b.newPage();
+  try {
+    await page.setViewport({ width: 794, height: 1123 });
+    await page.goto(`${FRONTEND_URL}/cover-letter/${data.id}/print`, {
+      waitUntil: 'networkidle0',
+    });
+    await page.waitForFunction(
+      'document.body.dataset.renderDone === "true"',
+      { timeout: 10000 }
+    );
+    const pdf = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: { top: '0', right: '0', bottom: '0', left: '0' },
+    });
+    return Buffer.from(pdf);
+  } catch (err) {
+    browser = null;
+    throw err;
+  } finally {
     await page.close().catch(() => {});
   }
 }

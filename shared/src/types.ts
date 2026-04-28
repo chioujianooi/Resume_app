@@ -81,3 +81,25 @@ export interface TemplateMetadata {
   name: string;
   description: string;
 }
+
+export interface CoverLetterData {
+  id: string;
+  name?: string;
+  resumeId: string;
+  contact: ContactInfo;
+  targetJob: string;
+  targetCompany: string;
+  date: string;
+  opening: string;
+  body: string;
+  closing: string;
+  language?: ResumeLanguage;
+  updatedAt: string;
+}
+
+export interface CoverLetterSummary {
+  id: string;
+  name?: string;
+  resumeId: string;
+  updatedAt: string;
+}
