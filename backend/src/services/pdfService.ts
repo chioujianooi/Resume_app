@@ -43,7 +43,6 @@ export async function generatePdf(data: ResumeData): Promise<Buffer> {
     const pdf = await page.pdf({
       format: 'A4',
       printBackground: true,
-      margin: { top: '0', right: '0', bottom: '0', left: '0' },
     });
     return Buffer.from(pdf);
   } catch (err) {
@@ -71,7 +70,6 @@ export async function generateCoverLetterPdf(data: CoverLetterData): Promise<Buf
     const pdf = await page.pdf({
       format: 'A4',
       printBackground: true,
-      margin: { top: '0', right: '0', bottom: '0', left: '0' },
     });
     return Buffer.from(pdf);
   } catch (err) {

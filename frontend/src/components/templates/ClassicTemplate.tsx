@@ -2,7 +2,7 @@ import type { ResumeData } from '@resume-app/shared';
 import { LABELS } from '../../utils/templateLabels';
 
 const CSS = `
-  @page { margin: 40px 48px; }
+  @page { margin: 40px 0; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body, .resume-root { font-family: 'Georgia', serif; font-size: 11pt; color: #1a1a1a; line-height: 1.5; min-height: 297mm; }
   .header { text-align: center; margin-bottom: 20px; }
@@ -38,7 +38,7 @@ export default function ClassicTemplate({ resume }: { resume: ResumeData }) {
   const links = contact.links ?? [];
 
   return (
-    <div className="resume-root" style={{ fontFamily: 'Georgia, serif', fontSize: '11pt', color: '#1a1a1a', padding: '40px 48px', lineHeight: 1.5 }}>
+    <div className="resume-root" style={{ fontFamily: 'Georgia, serif', fontSize: '11pt', color: '#1a1a1a', padding: '0 48px', lineHeight: 1.5 }}>
       <style>{CSS}</style>
 
       <div className="header">

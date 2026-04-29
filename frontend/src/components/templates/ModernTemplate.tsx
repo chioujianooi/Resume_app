@@ -4,13 +4,15 @@ import { LABELS } from '../../utils/templateLabels';
 
 // Main column content width: (794 sidebar+main) - 200 sidebar - 28 left pad - 32 right pad
 const CONTENT_WIDTH = 534;
-// Usable vertical space per page: 1123 A4 - 40 top pad - 40 bottom pad
+// Usable vertical space per page: 1123px (screen A4 approx) - 40px top pad - 40px bottom pad.
+// In print, @media print sets height: 297mm (true A4 = 1122.52px), giving ~1042.5px usable —
+// within 1px of this constant, so blocks measured to fit 1043px print correctly.
 const USABLE_HEIGHT = 1043;
 
 const CSS = `
   @page { margin: 0; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  .resume-modern { font-family: 'Arial', 'Liberation Sans', sans-serif; font-size: 10.5pt; color: #2d2d2d; display: flex; width: 794px; height: 1123px; overflow: hidden; }
+  .resume-modern { font-family: 'Roboto', Arial, sans-serif; font-size: 10.5pt; color: #2d2d2d; display: flex; width: 794px; height: 1123px; overflow: hidden; }
   .sidebar { width: 200px; min-width: 200px; background: #1e3a5f; color: #fff; padding: 32px 20px; overflow: hidden; }
   .main { flex: 1; min-width: 0; padding: 40px 32px 40px 28px; overflow: hidden; }
   .profile-photo { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; display: block; margin: 0 auto 16px; border: 3px solid #2e5a8a; }
@@ -34,6 +36,10 @@ const CSS = `
   .entry-body li { margin-bottom: 2px; overflow-wrap: break-word; }
   .entry-body p, .entry-body div { margin: 1px 0; }
   .project-tech { font-size: 9pt; color: #666; margin-top: 2px; }
+  @media print {
+    .resume-modern { height: 297mm; break-inside: avoid; page-break-inside: avoid; }
+    .resume-modern + .resume-modern { break-before: page; page-break-before: always; }
+  }
 `;
 
 const LEVEL_LABELS = ['', 'Basic', 'Familiar', 'Intermediate', 'Advanced', 'Expert'];
@@ -190,7 +196,7 @@ export default function ModernTemplate({ resume, onReady }: { resume: ResumeData
     let cancelled = false;
 
     async function run() {
-      await document.fonts.ready;
+      await document.fonts.load("10.5pt Roboto");
       if (cancelled || !measureRef.current) return;
 
       const children = Array.from(measureRef.current.children) as HTMLElement[];
@@ -245,6 +251,8 @@ export default function ModernTemplate({ resume, onReady }: { resume: ResumeData
           visibility: 'hidden',
           width: `${CONTENT_WIDTH}px`,
           pointerEvents: 'none',
+          fontFamily: "'Roboto', Arial, sans-serif",
+          fontSize: '10.5pt',
         }}
       >
         {allBlocks}

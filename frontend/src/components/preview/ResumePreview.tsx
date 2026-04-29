@@ -12,12 +12,13 @@ interface Props {
 const PAGE_HEIGHT = 1123;
 
 // visualMargin: white space (px) at the top and bottom of every page box (= @page top/bottom).
-// clipOffset: the template root div's top padding — content to skip before real content starts.
-// For Modern, @page margin is 40px but the root div has no padding, so clipOffset=0.
+// clipOffset: top offset into the template to skip before real content starts. Classic/Minimal
+// have no top padding on their root div (padding is 0 top), so clipOffset=0. Modern is rendered
+// via its own JS pagination and doesn't use this clipping path at all.
 const TEMPLATE_PAGE_CONFIG: Record<string, { visualMargin: number; clipOffset: number }> = {
-  classic:  { visualMargin: 40, clipOffset: 40 },
-  minimal:  { visualMargin: 40, clipOffset: 40 },
-  modern:   { visualMargin: 0,  clipOffset: 0  },
+  classic:  { visualMargin: 40, clipOffset: 0 },
+  minimal:  { visualMargin: 40, clipOffset: 0 },
+  modern:   { visualMargin: 0,  clipOffset: 0 },
 };
 
 export default function ResumePreview({ resume }: Props) {
