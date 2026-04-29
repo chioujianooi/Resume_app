@@ -1,6 +1,6 @@
 {
   "id": "5b81d44d-3572-42da-9e66-fdf4eaad7517",
-  "name": "Untitled Cover Letter",
+  "name": "Rohde & Schwarz 16620",
   "resumeId": "19854c15-6810-4676-9267-5f8b3763a50c",
   "contact": {
     "name": "Chiou Jian Ooi",
@@ -21,12 +21,12 @@
       }
     ]
   },
-  "targetJob": "Soft",
-  "targetCompany": "",
-  "date": "April 28, 2026",
-  "opening": "<p>Sehr gee</p>",
-  "body": "<p class=\"isSelectedEnd\">mit großem Interesse habe ich Ihre Stellenanzeige im Bereich Softwareentwicklung für Signalaufklärung (COMINT) gelesen. Aufgrund meiner mehrjährigen Erfahrung in der Entwicklung von Softwarelösungen mit C++ und Qt sowie im Umfeld verteilter Systeme bewerbe ich mich hiermit auf diese Position.</p><p class=\"isSelectedEnd\">In meiner aktuellen Tätigkeit als Software Engineer bei Cytiva entwickle und betreue ich sowohl Desktop- als auch Cloud-basierte Anwendungen. Ein Schwerpunkt meiner Arbeit liegt auf der Weiterentwicklung einer Qt-basierten Anwendung in modernem C++ sowie der Refaktorisierung bestehender Codebasen zur Verbesserung von Wartbarkeit und Testbarkeit. Darüber hinaus habe ich Backend-Services und REST-Schnittstellen im AWS-Umfeld umgesetzt und so zur Integration verteilter Systeme beigetragen. Auch Themen wie Build-Systeme (CMake), CI/CD-Pipelines und automatisiertes Testing gehören zu meinem täglichen Arbeitsumfeld.</p><p class=\"isSelectedEnd\">Zuvor war ich bei Precitec in der Entwicklung einer industriellen Echtzeitanwendung tätig, bei der ich unter anderem Kommunikationsschnittstellen zu externen Systemen implementiert habe. Während meines Masterstudiums konnte ich zudem im Rahmen meiner Abschlussarbeit praktische Erfahrungen im Bereich Radartechnologie und Signalverarbeitung sammeln, was eine fachliche Nähe zu Ihrem Anwendungsbereich darstellt.</p><p>Ihre Anforderungen hinsichtlich Softwarearchitektur, Codequalität sowie der Entwicklung modularer und wartbarer Systeme entsprechen in hohem Maße meinem bisherigen Tätigkeitsprofil . Besonders reizt mich die Möglichkeit, meine Kenntnisse in einem technologisch anspruchsvollen Umfeld einzubringen und weiterzuentwickeln.</p>",
-  "closing": "<p>Thank you for considering my application. I look forward to discussing how my experience aligns with your needs.</p><p>Sincerely,<br/>Chiou Jian Ooi</p>",
-  "updatedAt": "2026-04-28T10:09:13.764Z",
+  "targetJob": "Softwareentwickler C++ für COMINT",
+  "targetCompany": "Rohde & Schwarz",
+  "date": "29.04.2026",
+  "opening": "<p>Sehr geehrte Frau Senbert,</p>",
+  "body": "<p class=\"isSelectedEnd\">mit großem Interesse habe ich Ihre Stellenanzeige im Bereich Softwareentwicklung für Signalaufklärung (COMINT) gelesen. Aufgrund meiner mehrjährigen Erfahrung in der Entwicklung von Softwarelösungen mit C++ und Qt sowie im Umfeld verteilter Systeme bewerbe ich mich hiermit auf diese Position.</p><p class=\"isSelectedEnd\">In meiner letzten Tätigkeit als Software Engineer bei Cytiva war ich sowohl in der Entwicklung von Desktop- als auch von Cloud-basierten Anwendungen tätig. Ein Schwerpunkt lag auf der Weiterentwicklung einer Qt-basierten Anwendung in modernem C++ sowie der Refaktorisierung bestehender Codebasen zur Verbesserung von Wartbarkeit und Testbarkeit. Darüber hinaus habe ich Backend-Services und REST-Schnittstellen im AWS-Umfeld umgesetzt und so zur Integration verteilter Systeme beigetragen. Auch Themen wie Build-Systeme (CMake), CI/CD-Pipelines und automatisiertes Testing gehörten zu meinem Arbeitsumfeld.</p><p class=\"isSelectedEnd\">Zuvor war ich bei Precitec in der Entwicklung einer industriellen Echtzeitanwendung tätig, bei der ich unter anderem Kommunikationsschnittstellen zu externen Systemen implementiert habe. Während meines Masterstudiums konnte ich zudem im Rahmen meiner Abschlussarbeit praktische Erfahrungen im Bereich Radartechnologie und Signalverarbeitung sammeln, was eine fachliche Nähe zu Ihrem Anwendungsbereich darstellt.</p><p>Ihre Anforderungen hinsichtlich Softwarearchitektur, Codequalität sowie der Entwicklung modularer und wartbarer Systeme entsprechen in hohem Maße meinem bisherigen Tätigkeitsprofil . Besonders reizt mich die Möglichkeit, meine Kenntnisse in einem technologisch anspruchsvollen Umfeld einzubringen und weiterzuentwickeln.</p>",
+  "closing": "<p class=\"isSelectedEnd\">Gerne würde ich meine Erfahrungen und Fähigkeiten in Ihr Team einbringen und zum Erfolg Ihrer Projekte beitragen. Über die Einladung zu einem persönlichen Gespräch freue ich mich.</p><p>Mit freundlichen Grüßen</p><p>Chiou Jian Ooi</p>",
+  "updatedAt": "2026-04-29T07:36:16.451Z",
   "language": "de"
 }

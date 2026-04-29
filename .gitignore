@@ -4,3 +4,4 @@ build/
 .env
 *.local
 backend/src/data/resumes/*.json
+backend/src/data/cover-letters/5b81d44d-3572-42da-9e66-fdf4eaad7517.json
